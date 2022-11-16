@@ -39,9 +39,9 @@
 </td>
 <td>
   <% if(user.status){ %> 
- <a href="/admin/block-user/<%= user._id%>" ><button type="button" class="btn btn-success btn-icon-text"> block</button></a>
+ <a href="/admin/block-user/<%= user._id%>" ><button type="button" onclick="return confirm('the user will be blocked')" class="btn btn-success btn-icon-text"> block</button></a>
  <%} else{ %>  
-  <a href="/admin/unblock-user/<%= user._id%>" ><button type="button" class="btn btn-danger btn-icon-text">unblock</button></a>
+  <a href="/admin/unblock-user/<%= user._id%>" ><button type="button" onclick="return confirm('are you sure')" class="btn btn-danger btn-icon-text">unblock</button></a>
   <% } %> 
   </td>
         </tr>

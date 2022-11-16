@@ -27,10 +27,12 @@
                                 <div class="form-group">
                                     <p id="err"></p>
                                     <label for="register-email-2" class="pt-2">Enter otp</label>
+                                    <p id="errorValue" class="text-danger"> </p>
                                     <input type="tel" class="form-control" id="otp" name="otp" required>
                                 </div><!-- End .form-group -->
-
+                                
                                 <div class="form-footer">
+                                    <p id="err" class="text-danger"></p>
                                     <button type="button" onclick="verify()" class="btn btn-outline-primary-2">
                                         <span>Login</span>
                                         <i class="icon-long-arrow-right"></i>
@@ -88,12 +90,23 @@ function validation() {
 // verify fn////
     
      function verify() {
-        const otp = document.getElementById('otp').value
-        const otpValue = otp?.trim();
-        submit(otpValue);
+        const otp = document.getElementById('otp')
+        const otpValue = otp.value?.trim(); ///////////////////////////eidted
+       const  err1= otp.parentElement.querySelector('p')
+        let flag=1;
 
+        if(otpValue=="")
+        {
+            err1.innerText="this field is required"
+            let flag=2
+        }
+if(flag==1)
+{
+        submit(otpValue);
+}
         function submit(otpValue) {
             const number = document.getElementById('mobile').value;
+
             fetch('/otp-verify?mobileNumber=91' + number + '&code=' + otpValue, {
                 method: 'GET',
                 headers: {
@@ -106,7 +119,8 @@ function validation() {
                         
                         window.location.href = '/'
                     } else {
-                        window.location.reload()
+                        let errorValue=document.getElementById("errorValue")
+                        errorValue.innerText="otp not valid"
                     }
                 })
         }

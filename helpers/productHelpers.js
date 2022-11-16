@@ -1,3 +1,4 @@
+const { response } = require('../app');
 const { product, categories } = require('../config/connection')
 var db = require('../config/connection')
 
@@ -44,10 +45,22 @@ module.exports = {
     })
   },
   addCategory: (category) => {
+
     return new Promise(async (resolve, reject) => {
-      let data = await db.categories(category)
-      data.save()
-      resolve(data)
+      db.categories.find({ name: category.name }).then((data) => {
+        let response = {}
+
+        if (data.length == 0) {
+          let cata = db.categories(category)
+          cata.save()
+          response.data = cata
+          response.status = true
+          resolve(response)
+        }
+        else {
+          resolve({ status: false })
+        }
+      })
     })
   },
   getCategory: () => {
@@ -58,7 +71,7 @@ module.exports = {
   },
   updateCategory: (cateId, cateDetails) => {
     return new Promise(async (resolve, reject) => {
-      await db.categories.updateOne({ _id: cateId}, {
+      await db.categories.updateOne({ _id: cateId }, {
         $set: {
           name: cateDetails.name
         }
@@ -66,18 +79,26 @@ module.exports = {
       resolve()
     })
   },
-  getCategoryDetails:(cateId)=>{
+  getCategoryDetails: (cateId) => {
     return new Promise(async (resolve, reject) => {
-      await db.categories.findOne({_id:cateId}).then((categories)=>{
+      await db.categories.findOne({ _id: cateId }).then((categories) => {
         resolve(categories)
       })
     })
   },
-  deleteCategory:(cateId)=>{
-return new Promise((resolve, reject) => {
-  db.categories.deleteOne({_id:cateId}).then(()=>{
-    resolve()
-  })
-})
-  }
+  deleteCategory: (cateId) => {
+    return new Promise((resolve, reject) => {
+      db.categories.deleteOne({ _id: cateId }).then(() => {
+        resolve()
+      })
+    })
+  },
+  getOrderDetails:()=>{
+
+    return new Promise((resolve, reject) => {
+        db.order.find({}).then((res)=>{
+            resolve(res)
+        })
+    })
+}
 }

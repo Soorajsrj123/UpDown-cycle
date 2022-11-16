@@ -1,0 +1,60 @@
+<div id="tab-address" >
+    <br>
+    <h4 class="text-dark mx-5"><strong>The following addresses will be used on the checkout page by default.</h4>
+        <br>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card card-dashboard">
+                <div class="card-body">
+                    <h3 class="card-title">Your Address</h3><!-- End .card-title -->
+                    <br>
+                    <% console.log("kjhgf",address); %> 
+                   
+   
+    <h5><b>Name:</b> <%=address.address[0].firstname  %> </h5>
+
+                <h5><b>Country:</b><%=address.address[0].country  %> </h5>
+               <h5><b>Street:</b><%=address.address[0].street %> </h5>
+               <h5><b>city:</b><%=address.address[0].city  %> </h5>
+               <h5><b>State:</b><%=address.address[0].state%></p>
+               <h5><b>pincode:</b><%=address.address[0].state%></p>
+                 
+               <h5><b>Email:</b><%=address.address[0].email%></p>
+              
+                    <a href="#">Edit <i class="icon-edit"></i></a></p>
+                
+                </div><!-- End .card-body -->
+            </div><!-- End .card-dashboard -->
+        </div><!-- End .col-lg-6 -->
+
+        <div class="col-lg-6">
+            <div class="card card-dashboard">
+                <div class="card-body">
+                    <h3 class="card-title">Shipping Address</h3><!-- End .card-title -->
+
+                    <p>You have not set up this type of address yet.<br>
+                    <a href="#">Edit <i class="icon-edit"></i></a></p>
+                </div><!-- End .card-body -->
+            </div><!-- End .card-dashboard -->
+        </div><!-- End .col-lg-6 -->
+    </div><!-- End .row -->
+</div><!-- .End .tab-pane -->
+
+
+<!-- 
+<% address.address.forEach(adsdetails=>{ %> 
+   
+    <p><b>Name:</b> <%=adsdetails.firstname  %> </p>
+
+                <p><b>Country:</b><%=adsdetails.country  %> </p>
+               <p>Street:<%=adsdetails.street  %> </p>
+               <p>city:<%=adsdetails.city  %> </p>
+               <p>state:<%=adsdetails.state%></p>
+               <p>pincode:</p>
+                    John str<br>
+                    New York, NY 10001<br>
+                    1-234-987-6543<br>
+                    yourmail@mail.com<br>
+                    <a href="#">Edit <i class="icon-edit"></i></a></p>
+                    <% }) %>  -->

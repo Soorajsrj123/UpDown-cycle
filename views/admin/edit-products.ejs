@@ -7,35 +7,44 @@
 
 
       <form action="/admin/edit-product/<%= product._id %> " method="post" enctype="multipart/form-data">
-      <label for="Name">Name</label>
-      <input type="text" name="name" class="form-control" value="<%=product.name %>">
+        <label for="Name">Name</label>
+        <input type="text" name="name" class="form-control" value="<%=product.name %>">
 
-      <div class="form-group">
-                    
-                   
-        <label for="exampleInputName1">catagory</label>
-        <select class="form-control" name="catogory" id="exampleSelectGender">
-            <% category.forEach((category)=>{ %> 
-            <option value="<%= category.name %> "><%= category.name %> </option>
-            <% }) %> 
-        </select>
-       
-    
-</div>
-      <label for="Name">price</label>
-      <input type="tel" name="price" class="form-control" value="<%=product.price %>">
+        <div class="form-group">
 
-      <label for="description">Description</label>
-      <textarea name="description" class="form-control" cols="30" rows="10" value=""><%=product.description %></textarea>
 
-      <label for="">Image</label>
-      <input type="file" name="image" class="form-control">
+          <label for="exampleInputName1">catagory</label>
+          <select class="form-control" name="catogory" id="exampleSelectGender">
+            <% category.forEach((category)=>{ %>
+              <option value="<%= category.name %> ">
+                <%= category.name %>
+              </option>
+              <% }) %>
+          </select>
 
-      <button type="submit" class="btn btn-primary mt-3" value="Upload">Upload</button>
 
+        </div>
+        <label for="Name">price</label>
+        <input type="tel" name="price" class="form-control" value="<%=product.price %>">
+
+        <label for="description">Description</label>
+        <textarea name="description" class="form-control" cols="30" rows="10"
+          value=""><%=product.description %></textarea>
+
+        <label for="">Image</label>
+        <img src="/productimages/<%= product._id %>.jpg"  style="width:100px; height:90px ; " id="imgView" alt="" class="my-3">
+        <input type="file" name="image" class="form-control" onchange="viewImage(event)">
+
+        <button type="submit" class="btn btn-primary mt-3" value="Upload">Upload</button>
+        <a href="/admin/products" class="btn btn-light mt-3">cancel</a>
       </form>
 
-
+<script>
+ function viewImage(event)
+ {
+  document.getElementById('imgView').src=URL.createObjectURL(event.target.files[0])
+ }
+</script>
 
 
 

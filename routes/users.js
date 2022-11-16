@@ -6,126 +6,75 @@ const config = require('../config/otp');
 const otp = require('../config/otp');
 const productHelpers = require('../helpers/productHelpers');
 const { product } = require('../config/connection');
+const userController = require('../controller/userController');
 const Client = require('twilio')(config.accountId, config.authToken)
 
 /* GET users listing. */
 
 // home page
-router.get('/', function (req, res, next) {
-  let user = req.session.loggedIn
-  if (user) {
-    res.render('index', { nav: true, user });
-  }
-  else {
-    res.redirect('/login')
-  }
-
-
-});
+router.get('/',userController.landingPage);
 
 // user login
-router.get('/login', (req, res, next) => {
-  if (req.session.loggedIn) {
-res.redirect('/')
-  }else{
-  res.render('users/user-login', { nav: false })
-  }
-})
+router.get('/login',userController.loginPageGet);
 
-router.post('/login', (req, res) => {
-  console.log(req.body);
-  userHelpers.doLogin(req.body).then((response) => {
-
-    if (response.status) {
-      req.session.loggedIn = true
-      req.session.user = response.user
-      res.send({ value: 'success' })
-    }
-    else {
-      res.send({ value: 'failed' })
-    }
-  })
-})
+router.post('/login',userController.loginPagePost)
 // user SIGNUP
 
-router.get('/signup', (req, res) => {
-  res.render('users/user-signup', { nav: false })
-})
+router.get('/signup',userController.signUpPageGet)
 
-router.post('/signup', (req, res) => {
-  userHelpers.doSignUp(req.body).then((response) => {
-    if (!response.status) {
-      res.send({ value: 'failed' })
-    } else {
-      res.send({ value: 'success' })
-    }
-  })
-})
+router.post('/signup',userController.signUpPagePost)
 
 //OTP LOGIN
-router.get('/otp', (req, res) => {
-  res.render('users/otp')
-})
+router.get('/otp',userController.otpPage)
 
-router.get('/otp-login', (req, res) => {
+router.get('/otp-login',userController.otpLogin)
 
-  Client.verify.services(config.serviceId).verifications.create({
-
-    to: `+91${req.query.mobileNumber.trim()}`,
-    channel: 'sms'
-  }).then((data) => {
-    res.status(200).send(data)
-  })
-})
-
-router.get('/otp-verify', (req, res) => {
-  Client.verify.services(otp.serviceId).verificationChecks.create({
-    to: `+91${req.query.mobileNumber.trim()}`,
-    code: req.query.code
-
-  }).then((data) => {
-
-    if (data.valid) {
-      req.session.loggedIn = true
-      res.status(200)
-      res.send({ value: 'success' })
-    }
-    else {
-      res.send({ value: 'failed' })
-    }
-  }).catch(err => {
-    res.send(err)
-  })
-})
-// USER logout
-router.get('/logout', (req, res) => {
-  req.session.loggedIn = false
-  res.redirect('/login')
-})
-
-
-
-
-
-
+router.get('/otp-verify', userController.otpVerify)
 
 
 
 // shop page
-router.get('/shop', (req, res, next) => {
-  productHelpers.getAllproducts().then((products) => {
-    res.render('users/user-shop', { products, nav: true ,user:true})
-  })
+router.get('/shop',userController.shopPage)
 
-})
-// product page
-router.get('/products/:id', (req, res, next) => {
-  let proId = req.params.id
-  productHelpers.getProductDetails(proId).then((products) => {
-    res.render('users/user-product', { products, nav: true })
-  })
 
-})
+// product page  //page for product zoom
+router.get('/products/:id',userController.productPage)
+
+// CART MANAGEMENT
+
+// cart page
+router.get('/cart',userController.cartPage)
+
+// for get prod details
+router.get('/add-to-cart/:id',userController.addToCart)
+
+// USER logout
+router.get('/logout',userController.logout)
+
+router.post('/change-product-quantity',userController.changeQuantity)
+
+router.post('/remove-product',userController.removeProductCart)
+
+router.get('/check-out',userController.checkoutGet)
+
+router.post('/check-out',userController.checkoutPost)
+
+router.get('/orders',userController.getorders)
+
+router.post('/cancelOrder',userController.cancelOrder)
+router.get('/success',userController.success)
+
+router.get('/profile',userController.userProfile)
+
+router.get('/address',userController.getaddress)
+
+router.get('//filladdress/:id',(userController.filladress))
+
+
+
+
+
+
 
 router.get('/page', (req, res, next) => {
   res.render('users/user-page')

@@ -1,6 +1,6 @@
 <div class="page-wrapper">
     <header class="header header-intro-clearance header-4">
-        <div class="header-top">
+        <div class="header-top ">
             <div class="container">
                 <div class="header-left">
                     <a href="tel:#"><i class="icon-phone"></i>Call: +0123 456 789</a>
@@ -37,10 +37,27 @@
                                 </li>
                              <% if(locals.user){ %> 
                                 
-                                <li><a href="/logout" ><button class="btn-primary">LOGOUT</button></a></li>
+                                <li><a href="/logout" ><button class="btn-primary" onclick="return confirm('are you sure')">LOGOUT</button></a></li>
+
+                                
                               <% } else { %> 
                                 <li><a href="/login" ><button class="btn-primary">LOGIN</button></a></li>
                                     <% } %> 
+                            
+                                    <div class="dropdown cart-dropdown">
+                                        <a href="/cart" class="dropdown-toggle"  a>
+                                            <div class="icon">
+                                                <i class="icon-shopping-cart"></i>
+                                                <span id="cart-count" class="cart-count"><%= locals.cartCount %> </span>
+                                            </div>
+                                            <p>Cart</p>
+                                        </a>
+                    
+                                        <div class="mx-5 my-2" >
+                                            <li><a href="/profile"  ><img style="width:40px ; height:auto;"  src="/assets/images/user.png" alt=""></a></li>
+            
+                                                </div>
+                                        </div><!-- End .dropdown-menu -->
                                 
                             </ul>
                         </li>
@@ -124,7 +141,7 @@
                              
                             </li>
                             <li>
-                                <a href="#" class="sf-with-ul">Product</a>
+                                <a href="/orders" class="sf-with-ul">Orders</a>
 
                                 <div class="megamenu megamenu-sm">
                                     <div class="row no-gutters">
@@ -163,3 +180,4 @@
             </div><!-- End .container -->
         </div><!-- End .header-bottom -->
     </header><!-- End .header -->
+
