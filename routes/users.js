@@ -5,8 +5,11 @@ var router = express.Router();
 const config = require('../config/otp');
 const otp = require('../config/otp');
 const productHelpers = require('../helpers/productHelpers');
-const { product } = require('../config/connection');
+const { product, user } = require('../config/connection');
 const userController = require('../controller/userController');
+const { verifyLogin } = require('../controller/userController');
+const { verifyAdmin } = require('../controller/adminControler');
+const adminControler = require('../controller/adminControler');
 const Client = require('twilio')(config.accountId, config.authToken)
 
 /* GET users listing. */
@@ -24,51 +27,70 @@ router.get('/signup',userController.signUpPageGet)
 
 router.post('/signup',userController.signUpPagePost)
 
+router.get('/logout',userController.logout)
+
 //OTP LOGIN
-router.get('/otp',userController.otpPage)
+router.get('/otp',verifyLogin,userController.otpPage)
 
-router.get('/otp-login',userController.otpLogin)
+router.get('/otp-login',verifyLogin,userController.otpLogin)
 
-router.get('/otp-verify', userController.otpVerify)
+router.get('/otp-verify',verifyLogin, userController.otpVerify)
 
 
 
 // shop page
-router.get('/shop',userController.shopPage)
+router.get('/shop',verifyLogin,userController.shopPage)
 
 
 // product page  //page for product zoom
-router.get('/products/:id',userController.productPage)
+router.get('/products/:id',verifyLogin,userController.productPage)
 
 // CART MANAGEMENT
 
 // cart page
-router.get('/cart',userController.cartPage)
+router.get('/cart',verifyLogin,userController.cartPage)
 
 // for get prod details
 router.get('/add-to-cart/:id',userController.addToCart)
 
 // USER logout
-router.get('/logout',userController.logout)
 
-router.post('/change-product-quantity',userController.changeQuantity)
+// put
+router.put('/change-product-quantity',verifyLogin,userController.changeQuantity)
 
-router.post('/remove-product',userController.removeProductCart)
+router.post('/remove-product',verifyLogin,userController.removeProductCart)
 
-router.get('/check-out',userController.checkoutGet)
+router.get('/check-out',verifyLogin,userController.checkoutGet)
 
-router.post('/check-out',userController.checkoutPost)
+router.post('/check-out',verifyLogin,userController.checkoutPost)
 
-router.get('/orders',userController.getorders)
+router.get('/orders',verifyLogin,userController.getorders)
 
-router.post('/cancelOrder',userController.cancelOrder)
-router.get('/success',userController.success)
+router.put('/cancelOrder',verifyLogin,userController.cancelOrder)
+router.get('/success',verifyLogin,userController.success)
 
-router.get('/profile',userController.userProfile)
+router.get('/profile',verifyLogin,userController.userProfile)
+router.post('/edit-address',verifyLogin,userController.editAddress)
 
-router.get('/address',userController.getaddress)
+router.get('/address',verifyLogin,userController.getaddress)
 
-router.get('//filladdress/:id',(userController.filladress))
+router.get('/fill-address/:id',verifyLogin,userController.filladress)
+
+router.post('/verify-payment',verifyLogin,userController.verifyPayment)
+router.post('/deleteAddress',verifyLogin,userController.removeAddress)
+router.get('/check-cart-quantity/:id',verifyLogin,userController.checkCartQuantity)
+
+router.get('/paypal-success',verifyLogin,userController.paypalSuccess)
+
+router.post('/create-order',verifyLogin,userController.paypalOrder)
+router.post('/add-address',verifyLogin,userController.addAddress)
+router.post('/changeUserProfile',verifyLogin,userController.changeUserProfile)
+
+router.post('/return-order',verifyLogin,userController.returnOrder)
+
+router.get('/downloadinvoice/:id',verifyAdmin,userController.downloadinvoice)
+
+router.get('/add-wishlist/:id',verifyAdmin,adminControler.getwishlist)
 
 
 
@@ -76,8 +98,10 @@ router.get('//filladdress/:id',(userController.filladress))
 
 
 
-router.get('/page', (req, res, next) => {
-  res.render('users/user-page')
-})
+
+// router.get('/page', (req, res, next) => {
+//   res.render('users/user-page')
+// })
+
 
 module.exports = router;

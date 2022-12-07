@@ -4,7 +4,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const ejsLayouts=require('express-ejs-layouts')
-var fileUpload=require('express-fileupload')
 var session=require('express-session')
 const  connectMongoDbSession=require('connect-mongodb-session')
 const mongoDbSession=new connectMongoDbSession(session)         //mondodb session 
@@ -27,7 +26,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public/admin')));
 app.use(express.static(path.join(__dirname, 'public/assets')));
 app.use(ejsLayouts)
-app.use(fileUpload())
 
 // HEADER CATCH
 app.use(function (req, res, next) {

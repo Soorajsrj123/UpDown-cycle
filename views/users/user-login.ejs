@@ -117,9 +117,19 @@
         .then((res)=>{
             console.log(res);
             
-            if (res.value == "success") {
+            if (res.value == "success") {   
                 window.location.href = "/"
-            } else {
+            }
+            else if(res.value=="blocked"){
+                Swal.fire({
+  icon: 'error',
+  title: 'Oops...',
+  text: 'Accound blocked!',
+ 
+})
+
+            }
+             else {
                 var existError = document.getElementById('existError')
                     existError.innerText = res.value
             }

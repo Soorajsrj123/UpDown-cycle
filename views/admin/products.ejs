@@ -20,6 +20,9 @@
           price
         </th>
         <th>
+          stock
+        </th>
+        <th>
           catogory
         </th>
         <th>
@@ -30,13 +33,14 @@
       </tr>
     </thead>
     <tbody>
+   
       <% products.forEach((products,index)=>{%>
 <tr>
   <td>
 <%= index+1 %>
   </td>
   <td>
-<img style="border-radius:0;" src="/productimages/<%= products._id %>.jpg" alt="img">
+<img style="border-radius:0;" src="/productimages/<%= products.img[0] %>" alt="img">
   </td>
   <td>
     <%= products.name %>
@@ -48,8 +52,9 @@
   <td>
     <%= products.price %>
   </td>
+ 
   <td>
-    <%= products.catogory %>
+    <%= products.stock %>
   </td>
   <td>
  <a href="/admin/edit-product/<%=products._id%>"> <button class="btn-primary">edit</button></a> 

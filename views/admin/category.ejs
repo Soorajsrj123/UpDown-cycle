@@ -24,7 +24,7 @@
 <%- index+1 %> 
     </td>
     <td>
-     <%- category.name %> 
+     <%= category.name.toUpperCase() %> 
     </td>
     <td>
  <a href="/admin/edit-category/<%- category._id%>" class="btn btn-success">edit</a>

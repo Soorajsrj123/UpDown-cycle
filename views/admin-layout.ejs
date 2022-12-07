@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="/css/vertical-layout-light/style.css">
   <!-- endinject -->
   <link rel="shortcut icon" href="/images/favicon.png" />
+  <script defer src="https://cdn.crop.guide/loader/l.js?c=SJHMKZ"></script>
 </head>
 <body>
 <% if (locals.nav) {%> 
@@ -39,6 +40,12 @@
   <!-- plugins:js -->
   <script src="/vendors/js/vendor.bundle.base.js"></script>
   <!-- endinject -->
+  <script>
+    $(document).ready(function () {
+  $('#dtBasicExample').DataTable();
+  $('.dataTables_length').addClass('bs-select');
+});
+  </script>
   <!-- Plugin js for this page -->
   <script src="/vendors/chart.js/Chart.min.js"></script>
   <script src="/vendors/datatables.net/jquery.dataTables.js"></script>

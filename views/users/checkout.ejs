@@ -29,7 +29,8 @@
             <% address?.address?.forEach((addresses,index)=>{ %>
             <div class="card-header pt-3" id="heading-3">
               <h2 class="card-title">
-                <input onclick="display('<%=addresses._id %>')" name="address" id=" <%= index+1 %>" value="addrress" type="radio" class="collapsed " role="button" data-toggle="collapse" href="#collapse-3" aria-expanded="false" aria-controls="collapse-<%= index+1 %>">
+
+                <input onclick="display('<%=addresses._id %>')" name="address" id="<%= index+1 %>" value="addrress" type="radio" class="collapsed " role="button" data-toggle="collapse" href="#collapse-3" aria-expanded="false" aria-controls="collapse-<%= index+1 %>">
                 <%= addresses.firstname %> <%= addresses.lastname %>
                 </input>
               </h2>
@@ -168,22 +169,22 @@
                 </table><!-- End .table table-summary -->
 
                 <div class="accordion-summary" id="accordion-payment">
-                  <div class="card">
+                  <!-- <div class="card">
                     <div class="card-header" id="heading-1">
                       <h2 class="card-title">
                         <a role="button" data-toggle="collapse" href="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
                           Direct bank transfer
                         </a>
                       </h2>
-                    </div><!-- End .card-header -->
+                    </div>End .card-header
                     <div id="collapse-1" class="collapse show" aria-labelledby="heading-1" data-parent="#accordion-payment">
                       <div class="card-body">
                         Make your payment directly into our bank account. Please use your Order
                         ID as the payment reference. Your order will not be shipped until the
                         funds have cleared in our account.
-                      </div><!-- End .card-body -->
-                    </div><!-- End .collapse -->
-                  </div><!-- End .card -->
+                      </div>End .card-body
+                    </div>End .collapse
+                  </div>End .card -->
 
                   <div class="card">
                     <div class="card-header" id="heading-2">
@@ -204,8 +205,24 @@
                   <div class="card">
                     <div class="card-header" id="heading-3">
                       <h2 class="card-title">
-                        <input id="cash" type="radio" value="cash" class="collapsed" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="collapse-3">
+                        <input name="payment" id="cash" type="radio" value="COD" class="collapsed" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="collapse-3">
                         Cash on delivery
+                      </h2>
+                    </div><!-- End .card-header -->
+                    <div id="collapse-3" class="collapse" aria-labelledby="heading-3" data-parent="#accordion-payment">
+                      <div class="card-body">Quisque volutpat mattis eros. Lorem ipsum dolor sit
+                        amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis
+                        eros.
+                      </div><!-- End .card-body -->
+                    </div><!-- End .collapse -->
+                  </div><!-- End .card -->
+
+
+                  <div class="card">
+                    <div class="card-header" id="heading-3">
+                      <h2 class="card-title">
+                        <input name="payment" id="upi" type="radio" value="razorpay" class="collapsed" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="collapse-3">
+                        Razorpay
                       </h2>
                     </div><!-- End .card-header -->
                     <div id="collapse-3" class="collapse" aria-labelledby="heading-3" data-parent="#accordion-payment">
@@ -219,11 +236,11 @@
                   <div class="card">
                     <div class="card-header" id="heading-4">
                       <h2 class="card-title">
-                        <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-4" aria-expanded="false" aria-controls="collapse-4">
-                          PayPal <small class="float-right paypal-link">What is
-                            PayPal?</small>
-                        </a>
+                       
+                        <input type="radio" name="payment" value="paypal">
+                       paypal
                       </h2>
+                      <div id="paypal"></div>
                     </div><!-- End .card-header -->
                     <div id="collapse-4" class="collapse" aria-labelledby="heading-4" data-parent="#accordion-payment">
                       <div class="card-body">
@@ -342,9 +359,10 @@
 </footer><!-- End .footer -->
 
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
   function proceedToCheckout() {
-   
+
 
     const firstname = document.getElementById('firstname')
     const firstValue = firstname.value.trim()
@@ -396,11 +414,10 @@
     if (firstValue == "") {
       firstErr.innerText = "this field is required"
       flag = 2
-    }
-    else if (firstValue <= 3) {
+    } else if (firstValue <= 3) {
       firstErr.innerText = "Please enter minimum 3 characters"
-            flag = 2
-        }
+      flag = 2
+    }
     if (lastValue == "") {
       lastErr.innerText = "this field is required"
       flag = 2
@@ -431,11 +448,13 @@
       emailErr.innerText = "this field is required"
       flag = 2
     }
-    let paymentMethod = document.getElementById('cash').value
+
+    let paymentMethod = document.querySelector("input[name='payment']:checked").value
 
 
 
     if (flag == 1) {
+      console.log(paymentMethod, "sdfgh");
       submit(
         firstValue,
         lastValue,
@@ -452,6 +471,7 @@
     }
 
     function submit(
+
       firstValue,
       lastValue,
       countryValue,
@@ -463,7 +483,7 @@
       emailValue,
       paymentMethod
     ) {
-      console.log("yehhhh");
+
       $.ajax({
         url: '/check-out',
         data: {
@@ -480,22 +500,134 @@
         },
         method: 'post',
         success: (response) => {
-          if (response) {
+          if (response.success) {
             setTimeout(() => {
               window.location.href = '/success'
             }, 1000)
 
+          } else if (response.paypal == true) {
+            paypalPayment()
+          } else {
+            razorpayPayment(response)
           }
+
         }
 
       })
     }
 
-    function display(addsId){
-console.log("dsda");
+    // fill address////////////////
+
+    function display(addsId) {
+      $.ajax({
+        url: '/filladdress' + addsId,
+        method: 'get',
+      })
+      console.log("dsda");
     }
 
 
 
+  }
+
+  function razorpayPayment(order) {
+    var options = {
+      "key": "rzp_test_kztxhxAp7JryOm", // Enter the Key ID generated from the Dashboard
+      "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+      "currency": "INR",
+      "name": "updown ",
+      "description": "Test Transaction",
+      "image": "https://example.com/your_logo",
+      "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+      "handler": function(response) {
+        alert(response.razorpay_payment_id);
+        alert(response.razorpay_order_id);
+        alert(response.razorpay_signature)
+        verifyPayment(response, order)
+      },
+      "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9999999999"
+      },
+      "notes": {
+        "address": "Razorpay Corporate Office"
+      },
+      "theme": {
+        "color": "#3399cc"
+      }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+  }
+
+  function verifyPayment(payment, order) {
+
+    $.ajax({
+      url: '/verify-payment',
+      data: {
+        payment,
+        order
+      },
+      method: 'post',
+      success: (response) => {
+        if (response.status) {
+          window.location.href = '/success'
+        } else {
+          alert('payment failed')
+        }
+      }
+    })
+
+  }
+
+  function paypalPayment() {
+    console.log("heyyy/API");
+    paypal
+      .Buttons({
+        createOrder: function() {
+          return fetch("/create-order", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                items: [{
+                  id: 1,
+                }],
+              }),
+            })
+            .then(res => {
+              if (res.ok) return res.json()
+              return res.json().then(json => Promise.reject(json))
+            })
+            .then(({
+              id
+            }) => {
+              return id
+            })
+            .catch(e => {
+              console.error(e.error)
+            })
+        },
+        onApprove: function(data, actions) {
+          return actions.order.capture()
+            .then(() => {
+              $.ajax({
+                url: '/paypal-success',
+                method: 'get',
+                success: (response) => {
+                  if (response.status) {
+                    location.replace('/success')
+                  } else {
+
+                  }
+                }
+              })
+
+            })
+        },
+      })
+      .render("#paypal")
   }
 </script>
