@@ -99,7 +99,7 @@
 						</div><!-- End .cart-bottom -->
 					</div><!-- End .col-lg-9 -->
 					<aside class="col-lg-3">
-						<% if(total) {%> 
+						<% if(total? total:0) {%> 
 						<div class="summary summary-cart">
 							<h3 class="summary-title">Cart Total</h3><!-- End .summary-title -->
 
@@ -108,10 +108,10 @@
 									<tr class="summary-subtotal">
 										<td>Subtotal:</td>
 										<td id="subtotal">
-											Rs.<%= total %>
+											Rs.<%= offertotal %>
 										</td>
 									</tr><!-- End .summary-subtotal -->
-									<tr class="summary-shipping">
+						 			<tr class="summary-shipping">
 										<td>Shipping: free shipping</td>
 										<td>&nbsp;</td>
 									</tr>
@@ -161,7 +161,7 @@
 									<tr class="summary-total">
 										<td>Total:</td>
 										<td id="msubtotal">
-											 Rs.<%= total %>
+											 Rs.<%=offertotal%>
 										</td>
 									</tr><!-- End .summary-total -->
 								</tbody>
@@ -194,6 +194,7 @@
 </main><!-- End .main -->
 <script>
 	function changeQuantity(cartId, proId, counts, input, price,stocks) {
+		console.log(price,"jhgfghjkhg");
 		// console.log(cartId, proId, counts,input);
 		console.log(input.value);
 		let quantity = parseInt(input.value)
@@ -242,8 +243,8 @@
 					// document.getElementById('total').innerHTML = input.value * price
 					let total=parseInt(input.value)*price
 					input.parentElement.parentElement.parentElement.querySelector('td.total-col').innerText=total
-					document.getElementById('subtotal').innerText = 'Rs.'+ response.total.offertotal
-					document.getElementById('msubtotal').innerText = 'Rs.'+ response.total.offertotal
+					document.getElementById('subtotal').innerText = 'Rs.'+ response.total?.offertotal
+					document.getElementById('msubtotal').innerText = 'Rs.'+ response.total?.offertotal
 
 					
 					let number = $('#cart-count').html()

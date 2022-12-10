@@ -30,7 +30,7 @@ router.post('/signup',userController.signUpPagePost)
 router.get('/logout',userController.logout)
 
 //OTP LOGIN
-router.get('/otp',verifyLogin,userController.otpPage)
+router.get('/otp',userController.otpPage)
 
 router.get('/otp-login',verifyLogin,userController.otpLogin)
 
@@ -92,7 +92,7 @@ router.get('/downloadinvoice/:id',verifyAdmin,userController.downloadinvoice)
 
 router.get('/add-wishlist/:id',verifyAdmin,adminControler.getwishlist)
 
-
+router.post('/apply-coupon',userController.applyCoupon)
 
 
 

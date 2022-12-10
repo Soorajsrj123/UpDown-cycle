@@ -1,3 +1,113 @@
+<style>
+
+
+  /*the complete project is in the following link:
+https://github.com/vkive/coupon-code.git
+Follow me on Codepen
+*/
+
+.containernew{
+    width: 100%;
+    height: 40vh;
+    background: #f0fff3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+.coupon-card{
+    background: linear-gradient(135deg, #7158fe, #9d4de6);
+    color: #fff;
+    text-align: center;
+    padding: 33px 77px;
+    border-radius: 15px;
+    box-shadow: 0 10px 10px 0 rgba(0,0,0,0.15);
+    position: relative;
+
+}
+.logo{
+    width: 80px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+
+}
+.coupon-card h3{
+  font-size: 24px;
+    font-weight: 400;
+    line-height: 38px;
+
+}
+.coupon-card p{
+    font-size: 15px;
+
+}
+.coupon-row{
+    display: flex;
+    align-items: center;
+    margin: 25px auto;
+    width: fit-content;
+
+}
+#cpnCode{
+    border: 1px dashed #fff;
+    padding: 10px 20px;
+    border-right: 0;
+
+}
+#cpnBtn{
+    border: 1px solid #fff;
+    background: #fff;
+    padding: 10px 20px;
+    color: #7158fe;
+    cursor: pointer;
+}
+.circle1, .circle2{
+    background: #f0fff3;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+}
+.circle1{
+    left: -25px;
+}
+.circle2{
+    right: -25px;
+}
+
+</style>
+
+<%
+dataToReadable=(date)=>{
+
+  const date_=new Date(date);
+  let month=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+  let dd=date_.getDate()
+  let mm=date_.getMonth()
+  let monthText=month[mm]
+  let yyyy=date_.getFullYear()
+  
+  return `${isNaN(dd)?'00':dd}-${monthText}-${isNaN(yyyy)?'0000':yyyy}`
+  
+  } %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <main class="main">
   <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
     <div class="container">
@@ -43,18 +153,58 @@
               </div><!-- End .card-body -->
             </div><!-- End .collapse -->
             <% }) %>
-          </div><!-- End .card -->
-
-
+          </div>
         </div><!-- End .checkout-discount -->
 
 
+<!-- MODAL START -->
 
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+          BROWSE YOUR COUPON
+        </button>
+        
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                
+                <% coupondata.forEach(coupon=>{ %> 
+                      <div class="containernew">
+                          <div class="coupon-card">
+                             
+                              <h3 class="text-white"><%= coupon.description  %> </h3>
+                              <di class="coupon-row">
+                                  <span id="cpnCode"><%=coupon.couponName  %> </span>
+                                  <button class="couponButton"  onclick="applyCoupon(this,'<%=coupon._id%>','<%=coupon.couponName%>')" id="<%=coupon._id%>" >Copy Code</button>
+                              </di>
+                              <p class="text-white"><%=dataToReadable(coupon.expiry)%> </p>
+                              <div class="circle1"></div>
+                              <div class="circle2"></div>
+                          </div>
+                      </div>
+                 
+<% }) %> 
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+<!-- MODAL END -->
 
 
         <form action="#">
           <div class="row">
             <div class="col-lg-9">
+             
               <h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
               <div class="row">
                 <div class="col-sm-6">
@@ -134,26 +284,26 @@
                 <h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
 
                 <table class="table table-summary">
-                  <thead>
+                  <!-- <thead>
                     <tr>
                       <th>Product</th>
                       <th>Total</th>
                     </tr>
-                  </thead>
+                  </thead> -->
 
                   <tbody>
-                    <tr>
+                    <!-- <tr>
                       <td><a href="#">Beige knitted elastic runner shoes</a></td>
                       <td>$84.00</td>
-                    </tr>
+                    </tr> -->
 
-                    <tr>
+                    <!-- <tr>
                       <td><a href="#">Blue utility pinafore denimdress</a></td>
                       <td>$76,00</td>
-                    </tr>
-                    <tr class="summary-subtotal">
+                    </tr> -->
+                    <!-- <tr class="summary-subtotal">
                       <td>Subtotal:</td>
-                      <td>$160.00</td>
+                      <td>$160.00</td> -->
                     </tr><!-- End .summary-subtotal -->
                     <tr>
                       <td>Shipping:</td>
@@ -161,8 +311,8 @@
                     </tr>
                     <tr class="summary-total">
                       <td>Total:</td>
-                      <td>
-                        <%= total %>
+                      <td id="finalAmount" >
+                        <%= offertotal %>
                       </td>
                     </tr><!-- End .summary-total -->
                   </tbody>
@@ -269,6 +419,10 @@
                   </div><!-- End .card -->
                 </div><!-- End .accordion -->
 
+
+
+
+                
                 <button type="button" class="btn btn-outline-primary-2 btn-order btn-block" onclick="proceedToCheckout()">
                   <span class="btn-text">Place Order</span>
                   <span class="btn-hover-text">Proceed to Checkout</span>
@@ -630,4 +784,58 @@
       })
       .render("#paypal")
   }
+</script>
+
+<script>
+  function applyCoupon(input,id,couponCode){
+    
+
+   var cpnBtn = input
+            // var cpnCode = input.parentElement.querySelector('span.couponName')
+            // document.getElementById("cpnCode");
+      // document.getElementById('checkout-discount-input').innerText==cpnCode
+
+      cpnBtn.innerHTML="APPLIED";
+
+
+      $.ajax({
+        url:'/apply-coupon',
+        method:'post',
+        data:{
+          _id:id
+        },
+        success:(response)=>{
+          console.log(response,'this is my data');
+          if(response.status){
+            var elems=document.getElementsByClassName('couponButton')
+            for (var i=0;i<elems.length;i++){
+              elems[i].disabled=true
+            }
+
+            // tost
+            cpnBtn.innerHTML="applied"
+            // document.getElementById('offerApplied').innerText="Rs"+response.coupoAmount
+            let offertotal=document.getElementById('finalAmount').innerText=response.offerTotal
+            document.getElementById('finalAmount').innerText="Rs"+offertotal
+            
+          }else{
+            alert(response.message)
+          }
+        }
+      }),
+     
+
+
+
+
+            cpnBtn.onclick = function(){
+                navigator.clipboard.writeText(cpnCode.innerHTML);
+                cpnBtn.innerHTML ="COPIED";
+                setTimeout(function(){
+                    cpnBtn.innerHTML="COPY CODE";
+                }, 3000);
+            }
+
+
+          }
 </script>

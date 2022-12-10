@@ -27,7 +27,7 @@
                 <a class="nav-link" href="/orders">Orders</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="tab-downloads-link" data-toggle="tab" href="#tab-downloads" role="tab" aria-controls="tab-downloads" aria-selected="false">Downloads</a>
+                <a class="nav-link" id="tab-downloads-link" data-toggle="tab" href="#tab-downloads" role="tab" aria-controls="tab-downloads" aria-selected="false">wallet</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
@@ -56,10 +56,18 @@
                 <a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
               </div><!-- .End .tab-pane -->
 
+                              <!-- WALLET -->
+
               <div class="tab-pane fade" id="tab-downloads" role="tabpanel" aria-labelledby="tab-downloads-link">
-                <p>No downloads available yet.</p>
-                <a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
+               <%  if(userdetails.wallet){ %> 
+                <h5 class="text-success">Rs: <%=userdetails.wallet%> </h5>
+                <% }else{ %> 
+                  <h5 class="text-success">Rs:0</h5>
+                  <% } %> 
+                <a href="/shop" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
               </div><!-- .End .tab-pane -->
+
+        <!-- WALLET END -->
 
 
               <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">

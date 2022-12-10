@@ -19,8 +19,8 @@
           <label for="exampleInputName1">catagory</label>
           <select class="form-control" name="catogory" id="exampleSelectcata">
             <% category.forEach((category)=>{ %>
-            <option value="<%= category.name %> ">
-              <%= category.name %>
+            <option value="<%= category.name.toUpperCase() %> ">
+              <%= category.name.toUpperCase()  %>
             </option>
             <% }) %>
           </select>

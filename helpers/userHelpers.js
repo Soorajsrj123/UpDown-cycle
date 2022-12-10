@@ -266,7 +266,9 @@ module.exports = {
           $group: {
             _id: null,
             total: { $sum: { $multiply: ["$quantity", "$products.price"] } },
-            offertotal:{$sum:{$multiply:["$quantity","$products.offerprice"]}}
+            offertotal: {
+              $sum: { $multiply: ["$quantity", "$products.offerprice"] },
+            },
           },
         },
       ]);
@@ -275,7 +277,8 @@ module.exports = {
     });
   },
 
-  placeOrder: (order, total) => {
+  placeOrder: (order, total, couponId) => {
+    console.log(total, "aaaaaaaaaaaaaaaaa");
     return new Promise(async (resolve, reject) => {
       try {
         let components = await db.cart.aggregate([
@@ -313,7 +316,7 @@ module.exports = {
               _id: "$cartItemsResult._id",
               quantity: 1,
               productsName: "$cartItemsResult.name",
-              offerprice:"$cartItemsResult.offerprice",
+              offerprice: "$cartItemsResult.offerprice",
               productprice: "$cartItemsResult.price",
               status: "$cartItemsResult.status",
               shippingStatus: "$cartItemsResult.shippingStatus",
@@ -400,7 +403,7 @@ module.exports = {
           phone: order.phone,
           paymentMethod: order.payment,
           productDetails: components,
-          totalPrice: total,     //////////////////////////////////////////////////
+          totalPrice: total, //////////////////////////////////////////////////
           totalQuantity: totalQuantity,
           shippingAddress: orderAddress,
         };
@@ -425,7 +428,7 @@ module.exports = {
                       phone: order.phone,
                       paymentMethod: order.payment,
                       productDetails: components,
-                      totalPrice: total,/////////////////////////////////////////////////////
+                      totalPrice: total, /////////////////////////////////////////////////////
                       totalQuantity: totalQuantity,
                       shippingAddress: orderAddress,
                     },
@@ -446,7 +449,24 @@ module.exports = {
         }
 
         db.cart.deleteOne({ user: order.userId }).then((res) => {
-          resolve({ status: "success" });
+          if (couponId) {
+           console.log(couponId,order.userId,'my data for coupon');
+            db.user
+              .updateOne(
+                { _id: order.userId, "coupon.couponId": ObjectId(couponId) },
+                {
+                  $set: {
+                    "coupon.$.status": true,
+                  },
+                }
+              )
+              .then((data) => {
+                console.log(data,'setting coupon true');
+                resolve({ status: "success" });
+              });
+          } else {
+            resolve();
+          }
         });
       } catch (error) {
         console.log(error);
@@ -530,6 +550,7 @@ module.exports = {
 
   generatRazorpay: async (userId, total) => {
     let order = await db.order.findOne({ user: userId });
+    console.log(order, "user order");
     let orderId = order.orders.slice().reverse();
     orderId = orderId[0]._id;
     console.log(orderId, "this is order id");
@@ -779,84 +800,109 @@ module.exports = {
 
   returnProduct: (data, userId) => {
     return new Promise(async (resolve, reject) => {
-        try {
-            let order = await db.order.find({})
-            console.log(order,"ordersss");
-            // let flag = 1
-            if (order) {
-
-                let orderIndex = order[0].orders.findIndex(order => order._id == data.orderId)
-                console.log(orderIndex,"or index");
-                let productIndex = order[0].orders[orderIndex].productDetails.findIndex(product => product._id == data.proId)
-                 console.log(productIndex,"pro index");
-                await db.order.updateOne(
-                    {
-                        userId: userId
-                    },
-                    {
-                        $set: {
-                            ['orders.' + orderIndex + '.productDetails.' + productIndex + '.shippingStatus']: 5,
-                            ['orders.' + orderIndex + '.productDetails.' + productIndex + '.status']: false
-                        }
-                    }
-                );
-
-                db.order.aggregate([
-                    {
-                        $match: ({ 'orders._id': ObjectId(data.orderId) })
-                    },
-                    {
-                        $unwind: '$orders'
-                    },
-                    {
-                        $unwind: '$orders.productDetails'
-                    },
-                    {
-                        $match: { $and: [{ 'orders._id': ObjectId(data.orderId), 'orders.productDetails._id': ObjectId(data.proId) }] }
-                    }
-                ]).then((aggrData) => {
-                  console.log(aggrData,"agg data");
-                    let priceToWallet = {
-                        price: 0
-                    }
-                    let totalPrice = aggrData[0].orders.productDetails.productprice * aggrData[0].orders.productDetails.quantity
-                      console.log(totalPrice,"total price");
-                    if (aggrData[0].orders.totalPrice - totalPrice < 0) {
-                        priceToWallet.price = aggrData[0].orders.totalPrice
-                    } else {
-                        priceToWallet.price = totalPrice
-                    }
-
-                    db.product.updateOne({ _id: data.proId }, {
-                        $inc: { quantity: aggrData[0].orders.productDetails.stock }
-                    }).then((e) => {
-                        console.log(e,"this one");
-                    })
-
-                    db.user.updateOne({ _id: userId }, {
-                        $inc: {
-                            wallet: parseInt(priceToWallet.price)
-                        }
-                    }).then((e) => {
-                      console.log(e,"walll");
-                        resolve({ status: true })
-                    })
-                })
-
-
-            } else {
-                resolve({ status: false })
+      try {
+        let order = await db.order.find({});
+        console.log(order, "ordersss");
+        // let flag = 1
+        if (order) {
+          let orderIndex = order[0].orders.findIndex(
+            (order) => order._id == data.orderId
+          );
+          console.log(orderIndex, "or index");
+          let productIndex = order[0].orders[
+            orderIndex
+          ].productDetails.findIndex((product) => product._id == data.proId);
+          console.log(productIndex, "pro index");
+          await db.order.updateOne(
+            {
+              userId: userId,
+            },
+            {
+              $set: {
+                ["orders." +
+                orderIndex +
+                ".productDetails." +
+                productIndex +
+                ".shippingStatus"]: 5,
+                ["orders." +
+                orderIndex +
+                ".productDetails." +
+                productIndex +
+                ".status"]: false,
+              },
             }
-        } catch (err) {
-            console.log(err);
+          );
+
+          db.order
+            .aggregate([
+              {
+                $match: { "orders._id": ObjectId(data.orderId) },
+              },
+              {
+                $unwind: "$orders",
+              },
+              {
+                $unwind: "$orders.productDetails",
+              },
+              {
+                $match: {
+                  $and: [
+                    {
+                      "orders._id": ObjectId(data.orderId),
+                      "orders.productDetails._id": ObjectId(data.proId),
+                    },
+                  ],
+                },
+              },
+            ])
+            .then((aggrData) => {
+              console.log(aggrData, "agg data");
+              let priceToWallet = {
+                price: 0,
+              };
+              let totalPrice =
+                aggrData[0].orders.productDetails.offerprice *
+                aggrData[0].orders.productDetails.quantity;
+              console.log(totalPrice, "total price");
+              if (aggrData[0].orders.totalPrice - totalPrice < 0) {
+                priceToWallet.price = aggrData[0].orders.totalPrice;
+              } else {
+                priceToWallet.price = totalPrice;
+              }
+
+              db.product
+                .updateOne(
+                  { _id: data.proId },
+                  {
+                    $inc: { quantity: aggrData[0].orders.productDetails.stock },
+                  }
+                )
+                .then((e) => {
+                  console.log(e, "this one"); //false
+                });
+
+              db.user
+                .updateOne(
+                  { _id: userId },
+                  {
+                    $inc: {
+                      wallet: parseInt(priceToWallet.price),
+                    },
+                  }
+                )
+                .then((e) => {
+                  console.log(e, "walll");
+                  resolve({ status: true });
+                });
+            });
+        } else {
+          resolve({ status: false });
         }
-    })
-
-},
-
-
-
-
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  },
 
   // returnProduct: (data, userId) => {
   //   return new Promise(async (resolve, reject) => {
@@ -866,7 +912,6 @@ module.exports = {
   //       if (order) {
   //         let orderIndex = order.orders.findIndex( (index) => index._id == data.orderId);
   //         let productIndex = order.orders[orderIndex].productDetails.findIndex((index) => index._id == data.proId);
-        
 
   //       let thisOrder = await db.order.findOne({ "orders._id": data.orderId });
 
@@ -915,7 +960,7 @@ module.exports = {
   //           }
   //           let totalPrice= data[0].orders.productDetails.quantity * data[0].orders.productDetails.price
   //           priceWallet.price=totalPrice
-    
+
   //           db.product.updateOne(
   //             {_id:ObjectId(data.proId) },
   //             { $inc:{stock:data[0].orders.productDetails.quantity}}
@@ -933,7 +978,7 @@ module.exports = {
   //               console.log("price added to wallet");
   //               resolve({status:true})
   //             })
-               
+
   //         })
   //       }else{
   //         console.log("pro already returned");
@@ -944,4 +989,4 @@ module.exports = {
   //     }
   //   });
   // },
-}
+};

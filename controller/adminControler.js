@@ -4,6 +4,7 @@ var router = express.Router();
 const layout = 'admin-layout'
 var productHelpers = require("../helpers/productHelpers")
 var adminHelpers = require('../helpers/adminHelpers');
+var couponHelpers= require('../helpers/couponHelpers')
 const adminController = require('../controller/adminControler');
 const { Router, response, json } = require('express');
 
@@ -143,10 +144,15 @@ module.exports = {
 
   },
   editCategoryPost: (req, res) => {
+    console.log(req.body,"body");
+    productHelpers.updateCategory(req.params.id, req.body).then((data) => {
+      if(data.status){
+        res.send({value:"success"})
+      }else{
+        res.send({value:"failed"})
+      }
 
-    productHelpers.updateCategory(req.params.id, req.body).then(() => {
-
-      res.redirect('/admin/category')
+      
     })
   },
   deleteCategory: (req, res) => {
@@ -200,6 +206,7 @@ module.exports = {
   },
   chartGraph:(req,res)=>{
     try{
+      
       chartHelpers.priceGraph().then((priceStat)=>{
         res.send({priceStat})
 
@@ -288,7 +295,12 @@ module.exports = {
     },
 
     getallcoupon:(req,res)=>{
-      res.render('admin/coupon',{layout,nav:true})
+
+       couponHelpers.getallcoupon().then((allcoupon)=>{
+ console.log(allcoupon,"all cp");
+        res.render('admin/coupon',{layout,nav:true,allcoupon})
+       })
+     
     },
 
     addCoupon:(req,res)=>{
@@ -299,6 +311,27 @@ module.exports = {
 console.log(req.params.id,"ucha");
       productHelpers.addwishlist(req.session.user._id,req.params.id).then((response)=>{
         res.send(response)
+      })
+    },
+
+    generateCoupon:(req,res)=>{
+
+      couponHelpers.generateCoupon().then((response)=>{
+        res.json(response)
+      })
+    },
+
+    addcoupon:(req,res)=>{
+
+      couponHelpers.saveCoupon(req.body).then((response)=>{
+        res.json({status:true})
+      })
+    },
+
+    deleteCoupon:(req,res)=>{
+      let couponId=req.params.id
+      couponHelpers.removecoupon(couponId).then((response)=>{
+res.redirect('/admin/coupon')
       })
     }
 

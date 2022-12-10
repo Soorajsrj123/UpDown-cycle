@@ -43,6 +43,19 @@ const storage2 = multer.diskStorage({
 const upload2 = multer({ storage: storage2 });
 
 
+
+
+// login
+router.get("/login", adminController.loginGet);
+
+router.post("/login", adminController.loginPost);
+
+router.get("/logout", adminController.logout);
+
+router.get("/logintwo", adminController.logintwoget);
+
+router.post("/logintwo", adminController.logintwo);
+
 // ADMIN PAGE
 router.get("/", adminController.dashBoard);
 
@@ -95,16 +108,7 @@ router.get("/view-more/:id", verifyAdmin, adminController.viewMore);
 
 router.put("/shippingStatus",verifyAdmin,adminController.changeShippingStatus);
 
-// login
-router.get("/login", adminController.loginGet);
 
-router.post("/login", adminController.loginPost);
-
-router.get("/logout", adminController.logout);
-
-router.get("/logintwo", adminController.logintwoget);
-
-router.post("/logintwo", adminController.logintwo);
 
 router.get('/sales-report',verifyAdmin,adminController.salesreport)
 router.get('/banner-management',verifyAdmin,adminController.bannerManagement)
@@ -115,8 +119,15 @@ router.post('/add-bannerMain',verifyAdmin,upload2.array('image') ,adminControlle
 
 router.get('/delete-mainBanner/:id',verifyAdmin,adminController.deleteMainBanner)
 
+
+
 router.get('/coupon',adminController.getallcoupon)
 
 router.get('/add-coupon',adminController.addCoupon)
+
+router.post('/add-coupon',adminController.addcoupon)
+router.get('/generate-coupon-code',adminController.generateCoupon)
+
+router.get('/delete-coupon/:id',adminController.deleteCoupon)
 
 module.exports = router;

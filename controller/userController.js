@@ -7,10 +7,11 @@ var router = express.Router();
 const config = require("../config/otp");
 const otp = require("../config/otp");
 const productHelpers = require("../helpers/productHelpers");
+var couponHelpers= require('../helpers/couponHelpers')
 const { product } = require("../config/connection");
 const userController = require("../controller/userController");
 const { resolveInclude } = require("ejs");
-const { Db } = require("mongodb");
+const { Db, ObjectId } = require("mongodb");
 var db = require("../config/connection");
 const Client = require("twilio")(config.accountId, config.authToken);
 
@@ -25,7 +26,7 @@ const paypalClient = new paypal.core.PayPalHttpClient(
     process.env.PAYPAL_CLIENT_SECRET
   )
 );
-
+let couponAmount=0
 module.exports = {
   verifyLogin: (req, res, next) => {
     if (req.session.loggedIn) {
@@ -158,8 +159,9 @@ module.exports = {
     console.log(products);
     let cartCount = await userHelpers.getCartCount(req.session.user._id);
     let total = await userHelpers.getTotalAmmount(req.session.user._id);
-    let offertotal=total.offertotal
-    total=total.total
+    console.log(total,"two total");
+    let offertotal=total?.offertotal
+    total=total?.total
     res.render("users/cart", {
       total,
       offertotal,
@@ -193,14 +195,16 @@ module.exports = {
   checkoutGet: async (req, res) => {
     userId = req.session.user._id;
     let address = await userHelpers.getaddress(userId);
+   let coupondata =await couponHelpers.getallcoupon()
     let cartCount = await userHelpers.getCartCount(req.session.user._id);
     let total = await userHelpers.getTotalAmmount(req.session.user._id);
-    let offertotal=total.offertotal
-    total=total.total
+    let offertotal=total?.offertotal
+    total=total?.total
     res.render("users/checkout", {
       paypalClientId: process.env.PAYPAL_CLIENT_ID,
       total,
       offertotal,
+      coupondata,
       nav: true,
       user: true,
       address,
@@ -209,15 +213,27 @@ module.exports = {
   },
   checkoutPost: async (req, res) => {
     let totalAmmount = await userHelpers.getTotalAmmount(req.session.user._id);
+      let total=totalAmmount.offertotal
+      total=total-couponAmount//this is global variable
+      console.log(req.body,"raor body");
+        console.log(total,"raor total");
     req.body.userId = req.session.user._id;
-    userHelpers.placeOrder(req.body, totalAmmount).then((response) => {
+    userHelpers.placeOrder(req.body,total,req.session.coupon).then((response) => {
       if (req.body.payment == "COD") {
+          req.session.coupon=""
+          couponAmount=0
+
         res.send({ success: true });
       } else if (req.body.payment == "razorpay") {
-        userHelpers.generatRazorpay(req.body, totalAmmount).then((response) => {
+        userHelpers.generatRazorpay(req.body, total).then((response) => {
+          req.session.coupon=""
+          couponAmount=0
+          console.log(response,"razor response");
           res.json(response);
         });
       } else {
+        req.session.coupon=""
+        couponAmount=0
         res.json({ paypal: true });
       }
     });
@@ -278,8 +294,7 @@ module.exports = {
   },
   verifyPayment: (req, res) => {
     console.log(req.body);
-    userHelpers
-      .verifyPayment(req.body)
+    userHelpers.verifyPayment(req.body)
       .then(() => {
         userHelpers.changePaymentStatus(req.body["order[receipt]"]).then(() => {
           console.log("payment successfull");
@@ -395,6 +410,39 @@ console.log(req.body,"my body");
       
 res.send(response)
       
+    })
+  },
+
+  applyCoupon: async(req,res)=>{
+    req.session.coupon=req.body._id
+    let couponId=req.body._id
+    let totalAmmount= await userHelpers.getTotalAmmount(req.session.user._id)
+    let total=totalAmmount?.offertotal
+    
+
+    couponHelpers.getCoupon(couponId).then((data)=>{
+
+      if(total>=data.minPurchase){
+
+        couponHelpers.addCouponToUser(req.session.user._id,ObjectId(req.body._id),false).then((d)=>{
+
+          if(total*data.discountPercentage/100<=data.maxDiscountValue){
+
+            let couponTotal=total*data.discountPercentage/100
+            couponAmount=couponTotal
+            res.send({status:true,couponAmount:couponAmount,offerTotal:total-couponAmount})
+          }else{
+            couponAmount=data.maxDiscountValue
+            res.send({status:true,couponAmount:couponAmount,offerTotal:total-couponAmount})
+          }
+
+        }).catch((err)=>{
+          res.send({status:false,message:'coupon already used'})
+        })
+      }else{
+        res.send({status:false,message:"coupn not applicable"})
+      }
+
     })
   }
 

@@ -85,7 +85,7 @@
           <div class="col-6 col-md-4 col-lg-4 col-xl-3 col-xxl-2">
             <div class="product">
               <figure class="product-media">
-                <span class="product-label label-new">New</span>
+                <span class="product-label label-new" style="background-color: rgb(112, 185, 40);"><%=products.offerpercentage%>% off</span>
                 <a href="/products/<%= products._id  %>">
                   <img src="/productimages/<%= products.img[0] %>" alt="Product image" class="product-image">
                 </a>
@@ -104,15 +104,15 @@
 
               <div class="product-body">
                 <div class="product-cat">
-                  <a href="#">
-                    <%= products.catagory %>
+                  <a href="#" class="text-danger">
+                    <%= products.catogory %>
                   </a>
                 </div><!-- End .product-cat -->
                 <h3 class="product-title"><a href="">
                     <%= products.name %>
                   </a></h3><!-- End .product-title -->
                 <div class="product-price">
-                  <img src="../assets/images/rupee-sign.svg" alt=""> <%= products.price %>
+                  <s class="text-danger pr-2">₹<%= products.price %></s><span>₹<%= products.offerprice %></span>
                 </div><!-- End .product-price -->
                 <div class="ratings-container">
                   <div class="ratings">

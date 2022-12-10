@@ -5,34 +5,53 @@
       <thead>
         <tr>
           <th>
-            #
+            name
           </th>
           <th>
-            catogory
+            min purchase
           </th>
           <th>
-            ADD catogory
+            discount %
           </th>
   
-  
+          <th>
+            max discount value
+          </th>
+
+          <th>
+            Description
+          </th>
         </tr>
       </thead>
       <tbody>
-       
+       <% allcoupon.forEach(element=>{%> 
   <tr>
     <td>
+ <%=element.couponName%> 
+    </td>
+    <td>
+      <%=element.minPurchase%> 
+    </td>
 
-    </td>
     <td>
-    
+      <%=element.discountPercentage%> 
     </td>
+
     <td>
- <a href="/admin/edit-catego" class="btn btn-success">edit</a>
- <a href="/admin/delete-catego" class="btn btn-danger" onclick="return confirm('are you sure')" >delete</a>
+      <%=element.maxDiscountValue%> 
+    </td>
+
+    <td>
+      <%=element.description%> 
+    </td>
+
+    <td>
+ <!-- <a href="/admin/edit-catego" class="btn btn-success">edit</a> -->
+ <a href="/admin/delete-coupon/<%=element._id %> " class="btn btn-danger" onclick="return confirm('are you sure')" >delete</a>
     </td>
    
   </tr>
-
+<% }) %> 
       </tbody>
     </table>
   </div>

@@ -56,7 +56,7 @@ module.exports = {
             }
           )
           .then((data) => {
-            console.log(data, "soorya");
+           
             resolve(data);
           });
       } catch (error) {
@@ -104,8 +104,16 @@ module.exports = {
     });
   },
   updateCategory: (cateId, cateDetails) => {
+    // console.log(cateId,"/////,cateDetails,"...");
     return new Promise(async (resolve, reject) => {
       try {
+
+        cateDetails.name = await cateDetails.name.toLowerCase()
+        
+        let data= await db.categories.find({_id:cateId,name:cateDetails.name})
+
+        if(data.length!=0){
+
         await db.categories.updateOne(
           { _id: cateId },
           {
@@ -113,8 +121,14 @@ module.exports = {
               name: cateDetails.name,
             },
           }
-        );
-        resolve();
+        ).then((data)=>{
+           data.status=true
+          resolve(data);
+        })
+      }else{
+        resolve({ status: false });
+      }
+       
       } catch (error) {
         console.log(error);
       }

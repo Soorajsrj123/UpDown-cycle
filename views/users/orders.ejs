@@ -115,7 +115,7 @@
                             <div class="row mt-5">
 
                               <div class="mx-3">
-                                <h6 style="font-weight: 400; font-size: small; color: #585858;">Ordered :<%= order.createdAt  %>  <span class="px-4 text-light">|</span>Order Id : <%= order._id  %> </h6>
+                                <h6 style="font-weight: 400; font-size: small; color: #585858;">Ordered :<%=dataToReadable(order.createdAt) %> <span class="px-4 text-light">|</span>Order Id : <%= order._id  %> </h6>
                               </div>
 
                               <div class="col-12 mainDiv">
@@ -129,7 +129,7 @@
                                     <div class="d-flex">
                                       <img class="mx-5 mt-2" style="width: 100px; height:100px; object-fit:contain" src="/productimages/<%=elementitems.img[0]%>" alt="">
                                       <div class="d-flex-column">
-                                        <div class="mt-2" style="font-size: large;"><span class="px-2" style="color: #fb7e00; font-weight: 500;">Rs: <%= elementitems.productprice %> </span> Qty: <%= elementitems.quantity %><span class="mx-2" style="font-weight: 500;"> </span></div>
+                                        <div class="mt-2" style="font-size: large;"><span class="px-2" style="color: #fb7e00; font-weight: 500;">Rs: <%= elementitems.offerprice %> </span> Qty: <%= elementitems.quantity %><span class="mx-2" style="font-weight: 500;"> </span></div>
                             <!--product status -->         <% if(elementitems.status){%> 
                                         <div class="text-center text-white mt-1 py-2 " style="width: 100px;height:23px; border-radius: 10px; background-color: rgb(109, 176, 85); font-size: small; font-weight: 600;">
                                           <span>Order Placed</span>
@@ -174,7 +174,13 @@
                                   
                                        <% } %> 
                                        <% } %> 
+                                     <%if(elementitems.shippingStatus==4) { %>   
                                        <button class="btn btn-danger px-2" onclick=" returnorder('<%=order._id %>','<%=elementitems._id %>')"  >return order</button>
+                                       <% } else if(elementitems.shippingStatus<4) { %> 
+                                        <h5 hidden class="text-danger">ORDER RETURNED</h5>
+                                        <% } else{ %> 
+                                          <h5  class="text-danger">ORDER RETURNED</h5>
+                                          <% } %> 
                                       </div>
                                     </div>
                                   </div>
@@ -292,6 +298,13 @@
     data:{
       orderId:orderId,
       proId:proId,
+    },
+    success:(response)=>{
+      if(response.status){
+            location.reload()
+      }else{
+       return alert("already returned")
+      }
     }
   })
  }
@@ -343,7 +356,7 @@ function getSampleData(orderData,index) {
         },
         client: {
             company: orderData.firstname +' '+ orderData.lastname,
-            address: orderData.shippingAddress,
+            address:orderData.shippingAddress.street,
             zip: orderData.shippingAddress.pincode,
             city: orderData.shippingAddress.city,
             state: orderData.shippingAddress.state
@@ -361,12 +374,12 @@ function getSampleData(orderData,index) {
                 quantity: orderData.productDetails[index].quantity,
                 description: orderData.productDetails[index].productsName,
                 'tax-rate': 0,
-                price: orderData.productDetails[index].productprice
+                price: orderData.productDetails[index].offerprice
             }
         ],
         'bottom-notice': 'Kindly pay your invoice within 15 days.',
         settings: {
-            currency: 'USD' // See documentation 'Locales and Currency' for more info. Leave empty for no currency.
+            currency: 'INR' // See documentation 'Locales and Currency' for more info. Leave empty for no currency.
             // "locale": "nl-NL", // Defaults to en-US, used for number formatting (see docs)
             // "taxNotation": "gst", // Defaults to vat
             // "margin-top": 25, // Default to 25

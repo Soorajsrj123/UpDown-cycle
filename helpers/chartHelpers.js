@@ -64,12 +64,9 @@ module.exports = {
     });
   },
 
-  // findUsers: () => {
+  
 
-  //     let users = db.user.find()
-  //     console.log(users);
-
-  // },
+  //Sales Report
 
   monthlySales: () => {
     let date = new Date();
@@ -151,7 +148,8 @@ module.exports = {
               {
                 $group: {
                   _id: null,
-                  total: { $sum: "$orders.productDetails.productprice" },
+                  // total: { $sum: "$orders.productDetails.offerprice"
+                  totalRevenue:{$sum:{$multiply:['$orders.productDetails.offerprice','$orders.productDetails.quantity']}},
                   orders: { $sum: "$orders.productDetails.quantity" },
                   count: { $sum: 1 },
                 },
@@ -165,7 +163,7 @@ module.exports = {
         for (i = 0; i < 12; i++) {
           if (data[i + 1] == undefined) {
             data[i + 1] = {
-              total: 0,
+              totalRevenue: 0,
               orders: 0,
               count: 0,
             };
@@ -210,7 +208,7 @@ module.exports = {
                 {
                 $group:{
                     _id:{'$dayOfMonth':'$orders.createdAt'},
-                    totalRevenue:{$sum:{$multiply:['$orders.productDetails.productprice','$orders.productDetails.quantity']}},
+                    totalRevenue:{$sum:{$multiply:['$orders.productDetails.offerprice','$orders.productDetails.quantity']}},
                     orders:{$sum:1},
                     totalQuantity:{$first:'$orders.totalQuantity'}
                     
@@ -254,7 +252,7 @@ module.exports = {
             {
                 $group:{
                     _id:{'$year':'$orders.createdAt'},
-                    totalRevenue:{$sum:{$multiply:['$orders.productDetails.productprice','$orders.productDetails.quantity']}},
+                    totalRevenue:{$sum:{$multiply:['$orders.productDetails.offerprice','$orders.productDetails.quantity']}},
                     orders:{$sum:1},
                     totalQuantity:{$first:'$orders.totalQuantity'}
                 }
@@ -266,7 +264,7 @@ module.exports = {
             },
 
         ]).then((data)=>{
-            console.log(data,'soorya');
+            console.log(data,'sooraj');
             resolve(data)
         })
         
