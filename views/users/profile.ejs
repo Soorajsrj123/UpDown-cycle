@@ -36,7 +36,7 @@
                 <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Edit profile</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" onclick="return confirm('are you sure')">Sign Out</a>
+                <a class="nav-link" onclick="swalsignout()">Sign Out</a>
               </li>
             </ul>
           </aside><!-- End .col-lg-3 -->
@@ -352,6 +352,33 @@
 
   // }
 
+  function swalsignout(){
+
+Swal.fire({
+title: 'Are you sure?',
+text: "you will be logout",
+icon: 'warning',
+showCancelButton: true,
+confirmButtonColor: '#3085d6',
+cancelButtonColor: '#d33',
+confirmButtonText: 'Yes,LogOut!'
+}).then((result) => {
+if (result.isConfirmed) {
+Swal.fire(
+  'successfully logout!',
+  '',
+  'success'
+).then(()=>{
+     location.href="/logout"
+})
+}
+})
+
+}
+
+
+
+
   function filladdress(addressId) {
     let inputId = ['firstname', 'lastname', 'country', 'street', 'city', 'state', 'pincode', 'phone', 'email', '_id']
 
@@ -560,6 +587,7 @@ if(flag==1){
       if (response.status) {
         location.reload()
       }else{
+        Swal.fire('ADDRESS ALLREADY EXIST')
         err1.innerText="address already exist"
       }
     })

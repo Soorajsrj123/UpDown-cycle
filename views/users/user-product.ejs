@@ -46,11 +46,12 @@
                         </div><!-- End .rating-container -->
 
                         <div class="product-price">
-                            ₹<%- products.offerprice %> 
+                           <strike> <p class="text-danger" > ₹<%- products.price %> </p><br></strike>
+                           <span class="text-success" >₹<%- products.offerprice %> </span> 
                         </div><!-- End .product-price -->
 
                         <div class="product-content">
-                            <p><%- products.description %> </p>
+                            <span><%- products.description %> </span>
                         </div><!-- End .product-content -->
 
                         <!-- <div class="details-filter-row details-row-size">
@@ -83,7 +84,7 @@
                                     <input type="number" id="qty" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
                                 </div>End .product-details-quantity -->
 
-                                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                <button href="#" onclick="addToCart('<%=products._id%>','<%=products.stock%>')" class="btn-product btn-cart"><span>add to cart</span></button>
                             </div><!-- End .details-action-col -->
 
                             <div class="details-action-wrapper">
@@ -406,3 +407,100 @@
 </footer><!-- End .footer -->
 </div><!-- End .page-wrapper -->
 <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+
+<script>
+
+function addToCart(proId, stock) {
+    console.log("proid=>", proId, "stock=>", stock);
+    $.ajax({
+      url: '/check-cart-quantity/' + proId,
+      method: 'get',
+      success: (response) => {
+        if (response.status) {
+          if (stock - response.quantity <= 0) {
+          toast2()
+          } else {
+            $.ajax({
+              url: '/add-to-cart/' + proId,
+              method: 'get',
+
+              success: (response) => {
+                if (response.status) {
+                  toast1()
+                  let count = $('#cart-count').html()
+                  console.log(count, "is count");
+                  count = parseInt(count) + 1
+                  $('#cart-count').html(count)
+
+                }
+              }
+            })
+          }
+
+        } else if (response.status == false && stock == 0) {
+         toast2()
+        }
+        //   user exsist but no cart condition
+        else {
+          $.ajax({
+            url: '/add-to-cart/' + proId,
+            method: 'get',
+            success: (response) => {
+              if (response.status) {
+                 toast1()
+                let count = $('#cart-count').html()
+                console.log(count, "is count");
+                count = parseInt(count) + 1
+                $('#cart-count').html(count)
+              }
+            }
+          })
+        }
+      }
+    })
+
+
+
+
+  }
+ async function toast1()
+  {
+   const Toast=Swal.mixin({
+  toast: true,
+  position: 'bottom',
+  iconColor: 'white',
+  customClass: {
+    popup: 'colored-toast'
+  },
+  showConfirmButton: false,
+  timer: 1500,
+  timerProgressBar: true
+})
+await Toast.fire({
+  icon: 'success',
+  title: 'ITEM ADDED TO CART'
+})
+  }
+
+  async function toast2(){
+    const Toast= Swal.mixin({
+  toast: true,
+  position: 'bottom',
+  iconColor: 'white',
+  customClass: {
+    popup: 'colored-toast'
+  },
+  showConfirmButton: false,
+  timer: 1500,
+  timerProgressBar: true
+})
+await Toast.fire({
+  icon: 'error',
+  title: 'ITEM OUT OF STOCK'
+})
+
+  }
+
+
+</script>

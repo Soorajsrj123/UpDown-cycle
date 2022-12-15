@@ -50,7 +50,7 @@ module.exports = {
             resolve({ status: false });
           } else {
             userData.password = await bcrypt.hash(userData.password, 10);
-            console.log(userData.password);
+
             let data = db.user(userData);
             data.save();
             response.value = userData;
@@ -450,7 +450,7 @@ module.exports = {
 
         db.cart.deleteOne({ user: order.userId }).then((res) => {
           if (couponId) {
-           console.log(couponId,order.userId,'my data for coupon');
+            console.log(couponId, order.userId, "my data for coupon");
             db.user
               .updateOne(
                 { _id: order.userId, "coupon.couponId": ObjectId(couponId) },
@@ -461,7 +461,7 @@ module.exports = {
                 }
               )
               .then((data) => {
-                console.log(data,'setting coupon true');
+                console.log(data, "setting coupon true");
                 resolve({ status: "success" });
               });
           } else {
@@ -482,24 +482,26 @@ module.exports = {
   },
 
   cancelOrder: (data, userId) => {
+
+    console.log(data,"dddddda");
     let orderIds = data.orderId.trim();
+
 
     return new Promise(async (resolve, reject) => {
       let orderDetails = await db.order.find({ userId: userId });
-      //   console.log("orderDetails =>", orderDetails);
+      console.log("orderDetails =>", orderDetails);
 
       console.log("newwwwww", orderDetails[0]);
       if (orderDetails) {
         let orderIndex = orderDetails[0].orders.findIndex(
-          (product) => product._id == `${orderIds}`
+          (order) => order._id == `${orderIds}`
         );
         console.log(orderIndex);
         let productIndex = orderDetails[0].orders[
           orderIndex
         ].productDetails.findIndex((product) => product._id == data.productId);
         console.log(productIndex);
-        db.order
-          .updateOne(
+        db.order.updateOne(
             {
               "orders._id": data.orderId,
             },
@@ -513,10 +515,25 @@ module.exports = {
               },
             }
           )
-          .then((res) => {
-            console.log(res);
-            resolve({ status: true });
+          .then(async (res) => {
+            console.log(res, ">>>>>>>>>>>");
+
           });
+
+           let quantity = await orderDetails[0].orders[orderIndex].productDetails[productIndex].quantity;
+
+            db.product
+              .updateOne(
+                { _id: data.productId },
+                {
+                  $inc: { stock: quantity },
+                }
+              )
+              .then(() => {
+                resolve({ status: true });
+              });
+
+           
       }
     });
   },
@@ -589,7 +606,8 @@ module.exports = {
       let orderIndex = orders[0].orders.findIndex(
         (order) => order._id == orderId
       );
-      let updateData = await db.order
+      // let updateData = await 
+      db.order
         .updateOne(
           {
             "orders._id": orderId,
@@ -600,8 +618,9 @@ module.exports = {
             },
           }
         )
-        .then(() => {
-          resolve();
+        .then((response) => {
+          
+          resolve(response);
         });
     });
   },
@@ -860,10 +879,12 @@ module.exports = {
               let priceToWallet = {
                 price: 0,
               };
+
               let totalPrice =
                 aggrData[0].orders.productDetails.offerprice *
                 aggrData[0].orders.productDetails.quantity;
               console.log(totalPrice, "total price");
+              // checking coupon and offer price to be returned
               if (aggrData[0].orders.totalPrice - totalPrice < 0) {
                 priceToWallet.price = aggrData[0].orders.totalPrice;
               } else {
@@ -874,11 +895,11 @@ module.exports = {
                 .updateOne(
                   { _id: data.proId },
                   {
-                    $inc: { quantity: aggrData[0].orders.productDetails.stock },
+                    $inc: { stock: aggrData[0].orders.productDetails.quantity },
                   }
                 )
                 .then((e) => {
-                  console.log(e, "this one"); //false
+                  console.log(e, "this one");
                 });
 
               db.user
@@ -901,6 +922,18 @@ module.exports = {
       } catch (err) {
         console.log(err);
       }
+    });
+  },
+  isUser: (number) => {
+    return new Promise((resolve, reject) => {
+      db.user
+        .findOne({ phone: number })
+        .then((data) => {
+          resolve(data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
   },
 

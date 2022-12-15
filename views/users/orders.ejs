@@ -78,7 +78,7 @@
                               <ol class="breadcrumb">
                                   <li class="breadcrumb-item"><a href="/">Home</a></li>
                                   <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
-                                  <li class="breadcrumb-item active" aria-current="page">Wishlist</li>
+                                  <li class="breadcrumb-item active" aria-current="page">Orders</li>
                               </ol>
                           </div><!-- End .container -->
                         </nav><!-- End .breadcrumb-nav -->
@@ -115,17 +115,18 @@
                             <div class="row mt-5">
 
                               <div class="mx-3">
-                                <h6 style="font-weight: 400; font-size: small; color: #585858;">Ordered :<%=dataToReadable(order.createdAt) %> <span class="px-4 text-light">|</span>Order Id : <%= order._id  %> </h6>
+                                <h6 style="font-weight: 400; font-size: small; color: #585858;">ORDERED :<%=dataToReadable(order.createdAt) %> <span class="px-4 text-light">|</span>ORDER ID : <%= order._id  %> </h6>
                               </div>
 
                               <div class="col-12 mainDiv">
                                 <% order.productDetails.forEach((elementitems,index)=>{ %>
                                 <div class="row mt-2 p-3 mb-2">
                                   <div class="col-6 mx-3" style="float: left;">
-                                    <div class="d-flex"><span style="margin-top: 6px;" class="mx-3">
-                                        <h5>name</h5>
+                                    <div class="d-flex pl-5"><span style="margin-top: 6px;" class="mx-3 text-dark">
+                                        <h5 class="pl-2" >Name</h5>
                                         <%=elementitems.productsName%>
-                                      </span></div>
+                                      </span>
+                                    </div>
                                     <div class="d-flex">
                                       <img class="mx-5 mt-2" style="width: 100px; height:100px; object-fit:contain" src="/productimages/<%=elementitems.img[0]%>" alt="">
                                       <div class="d-flex-column">
@@ -152,15 +153,17 @@
                       
                                       <% if(elementitems.status){ %> 
                                       <div class="mt-1" style="margin-left: 50px !important;;">
-                                        <h6>OrderStatus:</h6>
+                                        <h6>ORDER STATUS</h6>
                                         <%if(elementitems.shippingStatus==1) {%>
-                                          <b>placed</b>
+                                          <!-- <b>placed</b> -->
+                                          <h5 class="pl-5">Placed</h5>
                                           <% }else if(elementitems.shippingStatus==2){ %> 
-                                            <b>Dispatched</b>
+                                            <h5 class="pl-5" >Dispatched</h5>
                                     <% }else if(elementitems.shippingStatus==3) {%> 
-                                       <b>shipped</b>
+                                       <h5 class="pl-5" >Shipped</h5>
                                        <% }else{ %>
-                                        Delivered
+                                      
+                                        <h5 class="pl-5" >  Delivered</h5>
                                         <% } %>  
                                       </div>
                                       <% } %> 
@@ -190,32 +193,33 @@
                             </div>
                             <div class="row mt-3">
                               <div class="col-12">
-                                <div class="row addrDiv pb-2">
+                               
+                                <div class="container row addrDiv pb-2">
                                   <div class="col-4  " style="float: left;">
-                                    <h6 class="mt-2 mx-4">Shipping address</h6>
+                                    <h6 class="mt-2 mx-4">SHIPPING ADDRESS</h6>
                                     <p class="mx-4 mt-1">
-                                      <span style="font-weight: 500;"><%=order.shippingAddress.street%> </span> <br>
-                                      <%=order.shippingAddress.city%>  <br>
-                                      <%=order.shippingAddress.phone%> <br>
-                                      <%=order.shippingAddress.state%>
+                                      <span style="font-weight: 500;"><b><%=order.shippingAddress.street%></b> </span> <br>
+                                   <b>  <%=order.shippingAddress.city%></b>   <br>
+                                    <b>  <%=order.shippingAddress.phone%></b> <br>
+                                     <b> <%=order.shippingAddress.state%></b>
                                     </p>
                                   </div>
 
                                   <div class="col-4 ">
-                                    <h6 class="mt-2 mx-4 ">Payment Method</h6>
-                                    <p class="mx-4 mt-1"><b><%=order.paymentMethod  %></b> </p>
+                                    <h6 class="mt-2 mx-4 ">PAYMENT METHOD</h6>
+                                    <p class="mx-4 mt-1 pl-5"><b><%=order.paymentMethod%></b> </p>
                                     <div class="mt-5">
-                                      <h6 class="mt-2 mx-4 ">Payment Status</h6>
+                                      <h6 class="mt-2 mx-4 pl-4">PAYMENT STATUS</h6>
                               <% if(order.paymentStatus==1){ %> 
-                                      <p class="mx-4 mt-1 text-success">success</p>
+                                      <p class="mx-4 mt-1 text-success pl-5">success</p>
                                       <% }else{ %>
-                                        <p class="mx-4 mt-1 text-danger">pending</p> 
+                                        <p class="mx-4 mt-1 text-danger pl-5">pending</p> 
                                         <% } %> 
                                     </div>
                                   </div>
                                   <div class="col-4">
 
-                                    <h5 class="mt-2 mx-4 ">Total Price</h5>
+                                    <h5 class="mt-2 mx-4 ">TOTAL PRICE</h5>
                                     <span class="mx-4 mt-2 " style="color: #fb6400; font-size: x-large !important; font-weight: 500; ">Rs:<%=order.totalPrice  %> </span>
 
                                   </div>
@@ -283,7 +287,6 @@
               return confirm('are you sure')
           },
           success:(response)=>{
-            
                window.location.reload()
           }
 
@@ -298,7 +301,9 @@
     data:{
       orderId:orderId,
       proId:proId,
-    },
+    },  beforeSend: () => {
+              return confirm('are you sure')
+          },
     success:(response)=>{
       if(response.status){
             location.reload()

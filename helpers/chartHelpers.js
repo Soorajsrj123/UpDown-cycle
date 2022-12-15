@@ -12,9 +12,9 @@ module.exports = {
           {
             $unwind: "$orders.productDetails",
           },
-          // {
-          //     '$match': { 'orders.paymentStatus': 'PAID' }
-          // },
+          {
+              '$match': { 'orders.productDetails.shippingStatus': 4}
+          },
           {
             $match: {
               $expr: {
@@ -30,7 +30,7 @@ module.exports = {
           {
             $group: {
               _id: null,
-              total: { $sum: "$orders.totalPrice" },
+              total: { $sum:{$multiply:["$orders.productDetails.quantity","$orders.productDetails.offerprice"]}},
             },
           },
         ]);
@@ -68,113 +68,92 @@ module.exports = {
 
   //Sales Report
 
-  monthlySales: () => {
-    let date = new Date();
-    let thisMonth = date.getMonth();
+  // monthlySales: () => {
+  //   let date = new Date();
+  //   let thisMonth = date.getMonth();
 
-    return new Promise((resolve, reject) => {
-      try {
-        db.order
-          .aggregate([
-            {
-              $unwind: "$orders",
-            },
-            {
-              $unwind: "$orders.productsDetails",
-            },
-            {
-              $match: { "orders.productsDetails.shippingStatus": 4 },
-            },
-            {
-              $match: {
-                $expr: {
-                  $eq: [
-                    {
-                      $month: "$orders.createdAt",
-                    },
-                    thisMonth + 1,
-                  ],
-                },
-              },
-            },
-            {
-              $group: {
-                _id: null,
-                total: { $sum: "$orders.totalPrice" },
-                orders: { $sum: "$orders.productsDetails.quantity" },
-                totalOrders: { $sum: "$orders.totalQuantity" },
-                count: { $sum: 1 },
-              },
-            },
-          ])
-          .then((data) => {
-            // console.log(data)
-            resolve({ status: true, data: data });
-          });
-      } catch (err) {
-        console.log(err);
-      }
-    });
-  },
+  //   return new Promise((resolve, reject) => {
+  //     try {
+  //       db.order
+  //         .aggregate([
+  //           {
+  //             $unwind: "$orders",
+  //           },
+  //           {
+  //             $unwind: "$orders.productsDetails",
+  //           },
+  //           {
+  //             $match: { "orders.productsDetails.shippingStatus": 4 },
+  //           },
+  //           {
+  //             $match: {
+  //               $expr: {
+  //                 $eq: [
+  //                   {
+  //                     $month: "$orders.createdAt",
+  //                   },
+  //                   thisMonth + 1,
+  //                 ],
+  //               },
+  //             },
+  //           },
+  //           {
+  //             $group: {
+  //               _id: null,
+  //               total: { $sum: "$orders.totalPrice" },
+  //               orders: { $sum: "$orders.productsDetails.quantity" },
+  //               totalOrders: { $sum: "$orders.totalQuantity" },
+  //               count: { $sum: 1 },
+  //             },
+  //           },
+  //         ])
+  //         .then((data) => {
+  //           // console.log(data)
+  //           resolve({ status: true, data: data });
+  //         });
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   });
+  // },
+
+
 
   monthWiseSales: () => {
+
+    let date = new Date();
+    let thismonth = date.getMonth();
+    let month = thismonth + 1;
+    let year = date.getFullYear();
+    
+
     return new Promise(async (resolve, reject) => {
-      try {
-        let data = [];
-        for (let i = 0; i < 12; i++) {
-          await db.order
-            .aggregate([
-              {
-                $unwind: "$orders",
-              },
-              {
-                $unwind: "$orders.productDetails",
-              },
-              {
-                $match: { "orders.productDetails.shippingStatus": 4 },
-              },
-              {
-                $match: {
-                  $expr: {
-                    $eq: [
-                      {
-                        $month: "$orders.createdAt",
-                      },
-                      i + 1,
-                    ],
-                  },
-                },
-              },
-              {
-                $group: {
-                  _id: null,
-                  // total: { $sum: "$orders.productDetails.offerprice"
-                  totalRevenue:{$sum:{$multiply:['$orders.productDetails.offerprice','$orders.productDetails.quantity']}},
-                  orders: { $sum: "$orders.productDetails.quantity" },
-                  count: { $sum: 1 },
-                },
-              },
-            ])
-            .then((monthlyData) => {
-            //   console.log(monthlyData, "month");
-              data[i + 1] = monthlyData[0];
-            });
-        }
-        for (i = 0; i < 12; i++) {
-          if (data[i + 1] == undefined) {
-            data[i + 1] = {
-              totalRevenue: 0,
-              orders: 0,
-              count: 0,
-            };
-          } else {
-            data[i];
+          
+      db.order.aggregate([
+        {
+          $unwind:'$orders'
+        },
+        {
+          $unwind:'$orders.productDetails'
+        },{
+          $match:{'orders.createdAt':{$gt:new Date(`${year}-01-01`),$lt:new Date(`${year}-12-31`)}}
+        },
+        {
+          $match:{'orders.productDetails.shippingStatus':4}
+        },
+        {
+          $group:{
+            _id:{'$month':"$orders.createdAt"},
+            totalCount:{$sum:{$multiply:['$orders.productDetails.offerprice','$orders.productDetails.quantity']}},
+           orders:{$sum:1},
+           totalQuantity:{$sum:'$orders.productDetails.quantity'}
           }
         }
-        resolve({ status: true, data: data });
-      } catch (err) {
-        console.log(err);
-      }
+      ]).then((data)=>{
+        console.log(data,"mmmm<><>");
+        resolve(data)
+      })
+
     });
   },
 
@@ -210,7 +189,7 @@ module.exports = {
                     _id:{'$dayOfMonth':'$orders.createdAt'},
                     totalRevenue:{$sum:{$multiply:['$orders.productDetails.offerprice','$orders.productDetails.quantity']}},
                     orders:{$sum:1},
-                    totalQuantity:{$first:'$orders.totalQuantity'}
+                    totalQuantity:{$sum:'$orders.productDetails.quantity'}
                     
                 }
             },
@@ -254,7 +233,7 @@ module.exports = {
                     _id:{'$year':'$orders.createdAt'},
                     totalRevenue:{$sum:{$multiply:['$orders.productDetails.offerprice','$orders.productDetails.quantity']}},
                     orders:{$sum:1},
-                    totalQuantity:{$first:'$orders.totalQuantity'}
+                    totalQuantity:{$sum:'$orders.productDetails.quantity'}
                 }
             },
             {

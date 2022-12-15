@@ -18,7 +18,7 @@
                         <div class="col-auto col-sm-7 col-md-6 col-lg-5">
                             <h3 class="intro-subtitle text-third"><%=item.name %> </h3>
                             <!-- End .h3 intro-subtitle -->
-                            <h3 style="color:#ffffff"><%=item.description  %> </h3>
+                            <h3 style="color:#ffffff;font-family:Roboto Condensed;" ><%=item.description  %> </h3>
                             <!-- <h1 class="intro-title">Dre Studio 3</h1> -->
                             <!-- End .intro-title -->
                         
@@ -39,40 +39,62 @@
                 </div><!-- End .intro-content -->
             </div><!-- End .intro-slide -->
         <% }) %> 
-            <div class="intro-slide" style="background-image: url(assets/images/demos/demo-4/slider/slide-2.png);">
-                <div class="container intro-content">
-                    <div class="row justify-content-end">
-
-                        
-                        <div class="col-auto col-sm-7 col-md-6 col-lg-5">
-                            <h3 class="intro-subtitle text-primary">New Arrival</h3><!-- End .h3 intro-subtitle -->
-                            <h1 class="intro-title">Apple iPad Pro <br>12.9 Inch, 64GB </h1><!-- End .intro-title -->
-
-                            <div class="intro-price">
-                                <sup>Today:</sup>
-                                <span class="text-primary">
-                                    $999<sup>.99</sup>
-                                </span>
-                            </div><!-- End .intro-price -->
-
-                            <a href="category.html" class="btn btn-primary btn-round">
-                                <span>Shop More</span>
-                                <i class="icon-long-arrow-right"></i>
-                            </a>
-                        </div><!-- End .col-md-6 offset-md-6 -->
-                    </div><!-- End .row -->
-                </div><!-- End .intro-content -->
-            </div><!-- End .intro-slide -->
+           
         </div><!-- End .intro-slider owl-carousel owl-simple -->
 
         <span class="slider-loader"></span><!-- End .slider-loader -->
     </div><!-- End .intro-slider-container -->
 
-    
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- CATA BANNER -->
+
+<div class="container">
+    <h2 class="title text-center mb-4 ">Explore Popular Categories</h2>
+    <!-- End .title text-center -->
+
+    <div class="cat-blocks-container">
+        <div class="row">
+            <% cataBanner.forEach(element=>{ %> 
+            <div class="col-6 col-sm-4 col-lg-2">
+                <a href="/shop?<%=element.url  %>" class="cat-block">
+                    <figure>
+                        <span>
+                            <img src="/assets/banner-images/<%=element.img[0]  %> " alt="Category image">
+                        </span>
+                    </figure>
+
+                    <h3 class="cat-block-title"><%=element.title%> </h3><!-- End .cat-block-title -->
+                </a>
+            </div><!-- End .col-sm-4 col-lg-2 -->
+<%})%>
+        </div><!-- End .row -->
+    </div><!-- End .cat-blocks-container -->
+</div><!-- End .container -->
+
+
+
+<!-- END CATA BANNER -->
+
+
 
     <div class="mb-4"></div><!-- End .mb-4 -->
-
-    
 
     <div class="mb-3"></div><!-- End .mb-5 -->
 
@@ -115,7 +137,7 @@
                     <div class="product product-2">
                        
                         <figure class="product-media">
-                            <span class="product-label label-circle label-top">Top</span>
+                            <span class="product-label label-circle label-top"><%=element.offerpercentage %>% </span>
                            
                             <a href="">
                                 <img src="/productimages/<%=element?.img[0]%>" alt="Product image"
@@ -154,10 +176,6 @@
                        
                     </div><!-- End .product -->
                     <% }) %> 
-
-                    
-
-                    
 
                 </div><!-- End .owl-carousel -->
             </div><!-- .End .tab-pane -->
@@ -2199,7 +2217,7 @@
             <div class="row">
                 <div class="col-sm-6 col-lg-3">
                     <div class="widget widget-about">
-                        <img src="assets/images/demos/demo-4/logo-footer.png" class="footer-logo" alt="Footer Logo"
+                        <img src="assets/images/uptownlogo.jpg" class="footer-logo" alt="Footer Logo"
                             width="105" height="25">
                         <p>Praesent dapibus, neque id cursus ucibus, tortor neque egestas augue, eu vulputate magna eros
                             eu erat. </p>

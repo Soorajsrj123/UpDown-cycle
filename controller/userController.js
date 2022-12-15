@@ -7,7 +7,7 @@ var router = express.Router();
 const config = require("../config/otp");
 const otp = require("../config/otp");
 const productHelpers = require("../helpers/productHelpers");
-var couponHelpers= require('../helpers/couponHelpers')
+var couponHelpers = require("../helpers/couponHelpers");
 const { product } = require("../config/connection");
 const userController = require("../controller/userController");
 const { resolveInclude } = require("ejs");
@@ -26,7 +26,7 @@ const paypalClient = new paypal.core.PayPalHttpClient(
     process.env.PAYPAL_CLIENT_SECRET
   )
 );
-let couponAmount=0
+let couponAmount = 0;
 module.exports = {
   verifyLogin: (req, res, next) => {
     if (req.session.loggedIn) {
@@ -40,12 +40,13 @@ module.exports = {
     let user = req.session.loggedIn;
     let product = await productHelpers.getAllproducts();
     let mainBanner = await productHelpers.getBanner();
+    let cataBanner= await productHelpers.getCataBanner()
     if (user) {
       let cartCount = await userHelpers.getCartCount(req.session.user._id);
 
-      res.render("index", { nav: true, user, cartCount, product, mainBanner });
+      res.render("index", { nav: true, user, cartCount, product, mainBanner,cataBanner });
     } else {
-      res.render("index", { nav: true, user: false, product, mainBanner });
+      res.render("index", { nav: true, user: false, product, mainBanner,cataBanner });
       // res.redirect('/login')
     }
   },
@@ -93,15 +94,31 @@ module.exports = {
   },
 
   otpLogin: (req, res) => {
-    Client.verify
-      .services(config.serviceId)
-      .verifications.create({
-        to: `+91${req.query.mobileNumber.trim()}`,
-        channel: "sms",
+    userHelpers
+      .isUser(req.query.mobileNumber)
+      .then((userExsist) => {
+        if (userExsist) {
+          console.log("user ind mone");
+          Client.verify
+            .services(config.serviceId)
+            .verifications.create({
+              to: `+91${req.query.mobileNumber.trim()}`,
+              channel: "sms",
+            })
+            .then((data) => {
+              console.log("soorya ethi mone ");
+              // req.session.user = data;
+              // req.session.loggedIn = true;
+              res.send({ value: true });   //////HEAD ERROR
+            })
+            .catch((error) => {
+              res.send({ value: false, message: error.message });
+            });
+        } else {
+          res.send({ value: false, message: "user does not exist" });
+        }
       })
-      .then((data) => {
-        res.status(200).send(data);
-      });
+      
   },
 
   otpVerify: (req, res) => {
@@ -114,8 +131,7 @@ module.exports = {
       .then((data) => {
         if (data.valid) {
           req.session.loggedIn = true;
-          res.status(200);
-          res.send({ value: "success" });
+          res.status(200).send({ value: "success" });
         } else {
           res.send({ value: "failed" });
         }
@@ -126,19 +142,18 @@ module.exports = {
   },
 
   shopPage: (req, res, next) => {
-    if (req.session.loggedIn) {
-      productHelpers.getAllproducts().then(async (products) => {
-        let cartCount = await userHelpers.getCartCount(req.session.user._id);
-        res.render("users/user-shop", {
-          products,
-          nav: true,
-          user: true,
-          cartCount,
-        });
+    console.log(req.query,"query");
+    productHelpers.getAllproducts(req.query).then(async (products) => {
+      let cartCount = await userHelpers.getCartCount(req.session.user._id);
+      res.render("users/user-shop", {
+        products,
+        nav: true,
+        user: true,
+        cartCount,
       });
-    } else {
-      res.redirect("/");
-    }
+    });
+
+    // res.redirect("/");
   },
 
   productPage: (req, res, next) => {
@@ -159,9 +174,9 @@ module.exports = {
     console.log(products);
     let cartCount = await userHelpers.getCartCount(req.session.user._id);
     let total = await userHelpers.getTotalAmmount(req.session.user._id);
-    console.log(total,"two total");
-    let offertotal=total?.offertotal
-    total=total?.total
+    console.log(total, "two total");
+    let offertotal = total?.offertotal;
+    total = total?.total;
     res.render("users/cart", {
       total,
       offertotal,
@@ -178,11 +193,10 @@ module.exports = {
   },
 
   changeQuantity: (req, res) => {
-  
     userHelpers.changeProductQuantity(req.body).then(async (response) => {
       response.total = await userHelpers.getTotalAmmount(req.session.user._id);
-      console.log( response.total,"mmmmmmmmmm");
-     
+      console.log(response.total, "mmmmmmmmmm");
+
       res.json(response);
     });
   },
@@ -195,11 +209,11 @@ module.exports = {
   checkoutGet: async (req, res) => {
     userId = req.session.user._id;
     let address = await userHelpers.getaddress(userId);
-   let coupondata =await couponHelpers.getallcoupon()
+    let coupondata = await couponHelpers.getallcoupon();
     let cartCount = await userHelpers.getCartCount(req.session.user._id);
     let total = await userHelpers.getTotalAmmount(req.session.user._id);
-    let offertotal=total?.offertotal
-    total=total?.total
+    let offertotal = total?.offertotal;
+    total = total?.total;
     res.render("users/checkout", {
       paypalClientId: process.env.PAYPAL_CLIENT_ID,
       total,
@@ -213,30 +227,32 @@ module.exports = {
   },
   checkoutPost: async (req, res) => {
     let totalAmmount = await userHelpers.getTotalAmmount(req.session.user._id);
-      let total=totalAmmount.offertotal
-      total=total-couponAmount//this is global variable
-      console.log(req.body,"raor body");
-        console.log(total,"raor total");
+    let total = totalAmmount.offertotal;
+    total = total - couponAmount; //this is global variable
+    console.log(req.body, "raor body");
+    console.log(total, "raor total");
     req.body.userId = req.session.user._id;
-    userHelpers.placeOrder(req.body,total,req.session.coupon).then((response) => {
-      if (req.body.payment == "COD") {
-          req.session.coupon=""
-          couponAmount=0
+    userHelpers
+      .placeOrder(req.body, total, req.session.coupon)
+      .then((response) => {
+        if (req.body.payment == "COD") {
+          req.session.coupon = "";
+          couponAmount = 0;
 
-        res.send({ success: true });
-      } else if (req.body.payment == "razorpay") {
-        userHelpers.generatRazorpay(req.body, total).then((response) => {
-          req.session.coupon=""
-          couponAmount=0
-          console.log(response,"razor response");
-          res.json(response);
-        });
-      } else {
-        req.session.coupon=""
-        couponAmount=0
-        res.json({ paypal: true });
-      }
-    });
+          res.send({ success: true });
+        } else if (req.body.payment == "razorpay") {
+          userHelpers.generatRazorpay(req.body, total).then((response) => {
+            req.session.coupon = "";
+            couponAmount = 0;
+            console.log(response, "razor response");
+            res.json(response);
+          });
+        } else {
+          req.session.coupon = "";
+          couponAmount = 0;
+          res.json({ paypal: true });
+        }
+      });
   },
 
   success: (req, res) => {
@@ -288,13 +304,16 @@ module.exports = {
   filladress: (req, res) => {
     userId = req.session.user._id;
     addrsId = req.params.id;
+    console.log(addrsId);
     userHelpers.filladress(userId, addrsId).then((data) => {
+      console.log(data[0].address,"my address");
       res.send(data[0].address);
     });
   },
   verifyPayment: (req, res) => {
     console.log(req.body);
-    userHelpers.verifyPayment(req.body)
+    userHelpers
+      .verifyPayment(req.body)
       .then(() => {
         userHelpers.changePaymentStatus(req.body["order[receipt]"]).then(() => {
           console.log("payment successfull");
@@ -320,8 +339,10 @@ module.exports = {
     const orderDetails = await db.order.find({ userId: req.session.user._id });
     let orders = orderDetails[0].orders.slice().reverse();
     let orderId1 = orders[0]._id;
+ 
     let orderId = "" + orderId1;
-    userHelpers.changePaymentStatus(req.session.user._id, orderId).then(() => {
+   
+    userHelpers.changePaymentStatus(orderId).then((data) => {
       res.json({ status: true });
     });
   },
@@ -399,51 +420,82 @@ module.exports = {
     console.log(orderId, "idsssss");
     let userId = req.session.user._id;
     userHelpers.getdata(orderId, userId).then((details) => {
-    
       res.send(details[0]);
     });
   },
 
-  returnOrder:(req,res)=>{
-console.log(req.body,"my body");
-    userHelpers.returnProduct(req.body,req.session.user._id).then((response)=>{
-      
-res.send(response)
-      
-    })
+  returnOrder: (req, res) => {
+    console.log(req.body, "my body");
+    userHelpers
+      .returnProduct(req.body, req.session.user._id)
+      .then((response) => {
+        res.send(response);
+      });
   },
 
-  applyCoupon: async(req,res)=>{
-    req.session.coupon=req.body._id
-    let couponId=req.body._id
-    let totalAmmount= await userHelpers.getTotalAmmount(req.session.user._id)
-    let total=totalAmmount?.offertotal
-    
+  applyCoupon: async (req, res) => {
+    req.session.coupon = req.body._id;
+    let couponId = req.body._id;
+    let totalAmmount = await userHelpers.getTotalAmmount(req.session.user._id);
+    let total = totalAmmount?.offertotal;
 
-    couponHelpers.getCoupon(couponId).then((data)=>{
-
-      if(total>=data.minPurchase){
-
-        couponHelpers.addCouponToUser(req.session.user._id,ObjectId(req.body._id),false).then((d)=>{
-
-          if(total*data.discountPercentage/100<=data.maxDiscountValue){
-
-            let couponTotal=total*data.discountPercentage/100
-            couponAmount=couponTotal
-            res.send({status:true,couponAmount:couponAmount,offerTotal:total-couponAmount})
-          }else{
-            couponAmount=data.maxDiscountValue
-            res.send({status:true,couponAmount:couponAmount,offerTotal:total-couponAmount})
-          }
-
-        }).catch((err)=>{
-          res.send({status:false,message:'coupon already used'})
-        })
-      }else{
-        res.send({status:false,message:"coupn not applicable"})
+    couponHelpers.getCoupon(couponId).then((data) => {
+      if (total >= data.minPurchase) {
+        couponHelpers.addCouponToUser(req.session.user._id, ObjectId(req.body._id), false).then((d) => {
+            if (
+              (total * data.discountPercentage) / 100 <=
+              data.maxDiscountValue
+            ) {
+              let couponTotal = (total * data.discountPercentage) / 100;
+              couponAmount = couponTotal;
+              res.send({
+                status: true,
+                couponAmount: couponAmount,
+                offerTotal: total - couponAmount,
+              });
+            } else {
+              couponAmount = data.maxDiscountValue;
+              res.send({
+                status: true,
+                couponAmount: couponAmount,
+                offerTotal: total - couponAmount,
+              });
+            }
+          })
+          .catch((err) => {
+            res.send({ status: false, message: "coupon already used" });
+          });
+      } else {
+        res.send({ status: false, message: "coupn not applicable" });
       }
-
-    })
-  }
-
+    });
+  },
+  productSearch: (req, res) => {
+    productHelpers.getAllproducts().then((response) => {
+      res.json(response);
+    });
+  },
+  wishlistpost: (req, res) => {
+    console.log(req.params.id);
+    productHelpers.addwishlist(req.session.user._id, req.params.id).then((response) => {
+        res.send(response);
+      });
+  },
+  getWishlist: async (req, res) => {
+    let cartCount = await userHelpers.getCartCount(req.session.user._id);
+    productHelpers.getAllWishlist(req.session.user._id).then((product) => {
+      console.log(product, "////////////");
+      res.render("users/wishlist", {
+        nav: true,
+        user: true,
+        product,
+        cartCount,
+      });
+    });
+  },
+  removeWishListProduct: (req, res) => {
+    productHelpers.deleteWishList(req.body).then((response) => {
+      res.json(response);
+    });
+  },
 };

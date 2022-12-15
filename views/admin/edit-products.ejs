@@ -59,7 +59,28 @@
           <p class="text-danger"></p>
           <label for="">Image</label>
           <img src="/productimages/<%= product.img[0] %>" style="width:100px; height:90px ; " id="imgView" alt="" class="my-3">
-          <input type="file" name="image" id="img" class="form-control" multiple onchange="(e)">
+          <input type="file" name="image" id="img" class="form-control" onchange="document.getElementById('imgView').src=window.URL.createObjectURL(this.files[0])">
+        </div>
+
+        <div class="form-group">
+          <p class="text-danger"></p>
+          <label for="">Image</label>
+          <img src="/productimages/<%= product.img[1] %>" style="width:100px; height:90px ; " id="imgView1" alt="" class="my-3">
+          <input type="file" name="image" id="img" class="form-control"  onchange="document.getElementById('imgView1').src=window.URL.createObjectURL(this.files[0])">
+        </div>
+
+        <div class="form-group">
+          <p class="text-danger"></p>
+          <label for="">Image</label>
+          <img src="/productimages/<%= product.img[2] %>" style="width:100px; height:90px ; " id="imgView2" alt="" class="my-3">
+          <input type="file" name="image" id="img" class="form-control" onchange="document.getElementById('imgView2').src=window.URL.createObjectURL(this.files[0])">
+        </div>
+
+        <div class="form-group">
+          <p class="text-danger"></p>
+          <label for="">Image</label>
+          <img src="/productimages/<%= product.img[3] %>" style="width:100px; height:90px ; " id="imgView3" alt="" class="my-3">
+          <input type="file" name="image" id="img" class="form-control"  onchange="document.getElementById('imgView3').src=window.URL.createObjectURL(this.files[0])">
         </div>
 
         <button type="button" onclick="validate()" class="btn btn-primary mt-3" value="Upload">Upload</button>
@@ -74,6 +95,16 @@
         (e) => {
           document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
         }
+        (e) => {
+          document.getElementById('imgView1').src = URL.createObjectURL(event.target.files[0])
+        }
+        (e) => {
+          document.getElementById('imgView2').src = URL.createObjectURL(event.target.files[0])
+        }
+        (e) => {
+          document.getElementById('imgView3').src = URL.createObjectURL(event.target.files[0])
+        }
+        
 
         function calculateoffer() {
           let price = document.getElementById('price').value

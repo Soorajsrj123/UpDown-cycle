@@ -360,26 +360,29 @@ footer p a:hover{
           <div class="tab-content text-center">
             <div class="tab-pane active" id="home" role="tabpanel">
               <button class="btn btn-primary" onclick="monthlyResult()">download</button>
+              <a href="/admin/generateExcel">excel</a>
               <table class="table" id="my-table">
                 <thead>
                   <tr>
-                    <th scope="col">#</th>
+                    <th scope="col">Month</th>
                     <th scope="col">Revenue</th>
                     <th scope="col">no of products sold</th>
                     <th scope="col">no of orders</th>
                   </tr>
                 </thead>
+                <% console.log(monthly,'jhgfdfghjk'); %> 
                 <tbody>
                   <% arr=['','jan','feb','mar','apr','may','jun','july','aug','sep','oct','nov','dec'] %> 
-                  <% monthly.data.forEach((data,index)=>{ %> 
+                  
                   <tr>
 
-                    <th scope="row"><%=arr[index]%> </th>
-                    <td><%=data.totalRevenue %> </td>
-                    <td><%=data.orders %> </td>
-                    <td><%=  data.count %></td>
+                    <th scope="row"><%=monthly[0]?._id %> </th>
+                    <td><%=monthly[0]?.totalCount%> </td>
+                    <td><%=  monthly[0]?.totalQuantity%></td>
+                    <td><%= monthly[0]?.orders %> </td>
+                   
                   </tr>
-                  <% }) %> 
+               
                 </tbody>
               </table>
             </div>
@@ -390,7 +393,7 @@ footer p a:hover{
                 
                 <thead>
                   <tr>
-                    <th scope="col">#</th>
+                    <th scope="col">Day</th>
                     <th scope="col">total Revenue</th>
                     <th scope="col">Orders</th>
                     <th scope="col">totalQuantity</th>
@@ -415,7 +418,7 @@ footer p a:hover{
               <table class="table" id="my-table3">
                 <thead>
                   <tr>
-                    <th scope="col">#</th>
+                    <th scope="col">Year</th>
                     <th scope="col">Revenue</th>
                     <th scope="col">no of orders</th>
                     <th scope="col">no of products sold</th>

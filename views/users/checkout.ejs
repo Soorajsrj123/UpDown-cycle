@@ -1,12 +1,10 @@
 <style>
-
-
   /*the complete project is in the following link:
 https://github.com/vkive/coupon-code.git
 Follow me on Codepen
 */
 
-.containernew{
+  .containernew {
     width: 100%;
     height: 40vh;
     background: #f0fff3;
@@ -14,54 +12,63 @@ Follow me on Codepen
     align-items: center;
     justify-content: center;
 
-}
-.coupon-card{
+  }
+
+  .coupon-card {
     background: linear-gradient(135deg, #7158fe, #9d4de6);
     color: #fff;
     text-align: center;
     padding: 33px 77px;
     border-radius: 15px;
-    box-shadow: 0 10px 10px 0 rgba(0,0,0,0.15);
+    box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.15);
     position: relative;
 
-}
-.logo{
+  }
+
+  .logo {
     width: 80px;
     border-radius: 8px;
     margin-bottom: 20px;
 
-}
-.coupon-card h3{
-  font-size: 24px;
+  }
+
+  .coupon-card h3 {
+    font-size: 15px;
     font-weight: 400;
     line-height: 38px;
 
-}
-.coupon-card p{
+  }
+
+  .coupon-card p {
     font-size: 15px;
 
-}
-.coupon-row{
+  }
+
+  .coupon-row {
     display: flex;
     align-items: center;
     margin: 25px auto;
     width: fit-content;
 
-}
-#cpnCode{
+  }
+
+  #cpnCode {
     border: 1px dashed #fff;
     padding: 10px 20px;
     border-right: 0;
 
-}
-#cpnBtn{
+  }
+
+  #cpnBtn {
     border: 1px solid #fff;
     background: #fff;
     padding: 10px 20px;
     color: #7158fe;
     cursor: pointer;
-}
-.circle1, .circle2{
+  }
+
+  .circle1,
+  .circle2 {
     background: #f0fff3;
     width: 50px;
     height: 50px;
@@ -70,18 +77,18 @@ Follow me on Codepen
     top: 50%;
     transform: translateY(-50%);
 
-}
-.circle1{
-    left: -25px;
-}
-.circle2{
-    right: -25px;
-}
+  }
 
+  .circle1 {
+    left: -25px;
+  }
+
+  .circle2 {
+    right: -25px;
+  }
 </style>
 
-<%
-dataToReadable=(date)=>{
+<%dataToReadable=(date)=>{
 
   const date_=new Date(date);
   let month=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
@@ -93,16 +100,6 @@ dataToReadable=(date)=>{
   return `${isNaN(dd)?'00':dd}-${monthText}-${isNaN(yyyy)?'0000':yyyy}`
   
   } %>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -133,36 +130,55 @@ dataToReadable=(date)=>{
                         <label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click here to
                                 enter your code</span></label>
                     </form> -->
+          <!--address  -->
+        </div><!-- End .checkout-discount -->
+<!-- <div class="row">
+<div  class="container col-md-12 bg-light mb-3 py-5" >
+  <input type="radio" onclick="filladdress()">
+</div>
+</div> -->
 
-          <div class="card ">
+<div class="page-content">
+  <div class="checkout">
+    <div class="container">
 
-            <% address?.address?.forEach((addresses,index)=>{ %>
-            <div class="card-header pt-3" id="heading-3">
+      <!--  address -->
+
+      <div style="background-color:rgb(255, 250, 250) ;" class="accordion-summary " id="accordion-payment">
+        <hr style="color: black;">
+        <h5 class="ml-4">my address</h4>
+       
+          <% address[0]?.address?.forEach((address,index)=>{%>
+          <div class="card my-4 ml-4">
+            <div class="card-header" id="heading-3">
               <h2 class="card-title">
-
-                <input onclick="display('<%=addresses._id %>')" name="address" id="<%= index+1 %>" value="addrress" type="radio" class="collapsed " role="button" data-toggle="collapse" href="#collapse-3" aria-expanded="false" aria-controls="collapse-<%= index+1 %>">
-                <%= addresses.firstname %> <%= addresses.lastname %>
+                <input onclick="fillAddress('<%=address._id %>')" type="radio" name="address" class="collapsed" role="button" data-toggle="collapse" href="#collapse-<%= index+1 %>" id="address<%=index+1%>" aria-expanded="false" aria-controls="collapse-<%= index+1 %>">
+                <label for="address<%=index+1%>"><%= address.firstname%> <%= address.lastname %> </label>
                 </input>
               </h2>
             </div><!-- End .card-header -->
-            <div id="collapse-3" class="collapse" aria-labelledby="heading-3" data-parent="#accordion-payment">
+            <div id="collapse-<%= index+1 %>" class="collapse" aria-labelledby="heading-<%= index+1 %>" data-parent="#accordion-payment">
               <div class="card-body">
-
-                <strong>address <%= index+1 %> </strong> <br><%=addresses.street %> <br> <%= addresses.city%> <br><%=addresses.country%> <br> <%=addresses.state  %>
-                <br><%= addresses.pincode  %> <br> <%= addresses.phone  %> <br> <%= addresses.email  %>
+                <strong>address :</strong> <%= address.street+" "+address.city+" "+address.state+" "+address.pincode%> <br>
+                <strong>mobile :</strong> <%= address.phone%> <br>
+                <strong>email :</strong> <%= address.email%> <br>
+                <hr>
               </div><!-- End .card-body -->
             </div><!-- End .collapse -->
-            <% }) %>
-          </div>
-        </div><!-- End .checkout-discount -->
+          </div><!-- End .card -->
+          <% }) %>
+          <button onClick="window.location.reload()" class="btn btn-outline-success btn-sm py-1 ml-4">New address</a> + </button>
+          <hr>
+      </div>
 
+<!-- ADDRESS END -->
 
-<!-- MODAL START -->
+        <!-- MODAL START -->
 
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
           BROWSE YOUR COUPON
         </button>
-        
+
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -173,23 +189,23 @@ dataToReadable=(date)=>{
                 </button>
               </div>
               <div class="modal-body">
-                
-                <% coupondata.forEach(coupon=>{ %> 
-                      <div class="containernew">
-                          <div class="coupon-card">
-                             
-                              <h3 class="text-white"><%= coupon.description  %> </h3>
-                              <di class="coupon-row">
-                                  <span id="cpnCode"><%=coupon.couponName  %> </span>
-                                  <button class="couponButton"  onclick="applyCoupon(this,'<%=coupon._id%>','<%=coupon.couponName%>')" id="<%=coupon._id%>" >Copy Code</button>
-                              </di>
-                              <p class="text-white"><%=dataToReadable(coupon.expiry)%> </p>
-                              <div class="circle1"></div>
-                              <div class="circle2"></div>
-                          </div>
-                      </div>
-                 
-<% }) %> 
+
+                <% coupondata.reverse().forEach(coupon=>{ %>
+                <div class="containernew">
+                  <div class="coupon-card">
+
+                    <h3 class="text-white"><%= coupon.description  %> </h3>
+                    <di class="coupon-row">
+                      <span id="cpnCode"><%=coupon.couponName  %> </span>
+                      <button class="couponButton" onclick="applyCoupon(this,'<%=coupon._id%>','<%=coupon.couponName%>')" id="<%=coupon._id%>">Copy Code</button>
+                    </di>
+                    <p class="text-white"><%=dataToReadable(coupon.expiry)%> </p>
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                  </div>
+                </div>
+
+                <% }) %>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -198,13 +214,13 @@ dataToReadable=(date)=>{
             </div>
           </div>
         </div>
-<!-- MODAL END -->
+        <!-- MODAL END -->
 
 
         <form action="#">
           <div class="row">
             <div class="col-lg-9">
-             
+
               <h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
               <div class="row">
                 <div class="col-sm-6">
@@ -311,7 +327,7 @@ dataToReadable=(date)=>{
                     </tr>
                     <tr class="summary-total">
                       <td>Total:</td>
-                      <td id="finalAmount" >
+                      <td id="finalAmount">
                         <%= offertotal %>
                       </td>
                     </tr><!-- End .summary-total -->
@@ -386,9 +402,9 @@ dataToReadable=(date)=>{
                   <div class="card">
                     <div class="card-header" id="heading-4">
                       <h2 class="card-title">
-                       
+
                         <input type="radio" name="payment" value="paypal">
-                       paypal
+                        paypal
                       </h2>
                       <div id="paypal"></div>
                     </div><!-- End .card-header -->
@@ -422,7 +438,7 @@ dataToReadable=(date)=>{
 
 
 
-                
+
                 <button type="button" class="btn btn-outline-primary-2 btn-order btn-block" onclick="proceedToCheckout()">
                   <span class="btn-text">Place Order</span>
                   <span class="btn-hover-text">Proceed to Checkout</span>
@@ -669,20 +685,42 @@ dataToReadable=(date)=>{
 
       })
     }
+  }
 
-    // fill address////////////////
 
-    function display(addsId) {
+// FILL ADDRESSS
+
+function fillAddress(addsId) {
+  
       $.ajax({
-        url: '/filladdress' + addsId,
+        url: '/filladdress/' + addsId,
         method: 'get',
+        success(response){
+          document.getElementById('firstname').value=response.firstname
+          document.getElementById('lastname').value=response.lastname
+          document.getElementById('country').value=response.country
+          document.getElementById('streetaddress').value=response.street
+          document.getElementById('city').value=response.city
+          document.getElementById('state').value=response.state
+          document.getElementById('pincode').value=response.pincode
+          document.getElementById('phone').value=response.phone
+          document.getElementById('email').value=response.email
+
+        }
       })
-      console.log("dsda");
+     
     }
 
 
+// FILL ADDRESS END
 
-  }
+
+
+
+
+
+
+
 
   function razorpayPayment(order) {
     var options = {
@@ -787,55 +825,54 @@ dataToReadable=(date)=>{
 </script>
 
 <script>
-  function applyCoupon(input,id,couponCode){
-    
-
-   var cpnBtn = input
-            // var cpnCode = input.parentElement.querySelector('span.couponName')
-            // document.getElementById("cpnCode");
-      // document.getElementById('checkout-discount-input').innerText==cpnCode
-
-      cpnBtn.innerHTML="APPLIED";
+  function applyCoupon(input, id, couponCode) {
 
 
-      $.ajax({
-        url:'/apply-coupon',
-        method:'post',
-        data:{
-          _id:id
+    var cpnBtn = input
+    // var cpnCode = input.parentElement.querySelector('span.couponName')
+    // document.getElementById("cpnCode");
+    // document.getElementById('checkout-discount-input').innerText==cpnCode
+
+    cpnBtn.innerHTML = "APPLIED";
+
+
+    $.ajax({
+        url: '/apply-coupon',
+        method: 'post',
+        data: {
+          _id: id
         },
-        success:(response)=>{
-          console.log(response,'this is my data');
-          if(response.status){
-            var elems=document.getElementsByClassName('couponButton')
-            for (var i=0;i<elems.length;i++){
-              elems[i].disabled=true
+        success: (response) => {
+          console.log(response, 'this is my data');
+          if (response.status) {
+            var elems = document.getElementsByClassName('couponButton')
+            for (var i = 0; i < elems.length; i++) {
+              elems[i].disabled = true
             }
 
             // tost
-            cpnBtn.innerHTML="applied"
+            cpnBtn.innerHTML = "applied"
             // document.getElementById('offerApplied').innerText="Rs"+response.coupoAmount
-            let offertotal=document.getElementById('finalAmount').innerText=response.offerTotal
-            document.getElementById('finalAmount').innerText="Rs"+offertotal
-            
-          }else{
+            let offertotal = document.getElementById('finalAmount').innerText = response.offerTotal
+            document.getElementById('finalAmount').innerText = "Rs" + offertotal
+
+          } else {
             alert(response.message)
           }
         }
       }),
-     
 
 
 
 
-            cpnBtn.onclick = function(){
-                navigator.clipboard.writeText(cpnCode.innerHTML);
-                cpnBtn.innerHTML ="COPIED";
-                setTimeout(function(){
-                    cpnBtn.innerHTML="COPY CODE";
-                }, 3000);
-            }
+      cpnBtn.onclick = function() {
+        navigator.clipboard.writeText(cpnCode.innerHTML);
+        cpnBtn.innerHTML = "COPIED";
+        setTimeout(function() {
+          cpnBtn.innerHTML = "COPY CODE";
+        }, 3000);
+      }
 
 
-          }
+  }
 </script>

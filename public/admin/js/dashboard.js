@@ -1,14 +1,9 @@
 
   
-  ( function(){
-    fetch('/admin/chartGraph', {
-      method: 'get',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    }).then(res => res.json())
-      .then((res) => {
-        let price=res.priceStat
+  
+       
+        // let price=res.priceStat
+        // console.log(price,"bvcxzcvbn");
        
        
 
@@ -602,9 +597,7 @@ new Chart("myChart", {
 
   });
 }
-      })
-  })();
-
+   
 
 
   //w3 chart graph

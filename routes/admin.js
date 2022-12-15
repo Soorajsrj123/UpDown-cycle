@@ -9,6 +9,7 @@ const { Router, response } = require("express");
 const { verifyAdmin } = require("../controller/adminControler");
 const { editProduct } = require("../helpers/productHelpers");
 const multer = require("multer");
+const { route } = require("./users");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -111,6 +112,9 @@ router.put("/shippingStatus",verifyAdmin,adminController.changeShippingStatus);
 
 
 router.get('/sales-report',verifyAdmin,adminController.salesreport)
+
+router.get('/generateExcel',adminController.getExceldata)
+
 router.get('/banner-management',verifyAdmin,adminController.bannerManagement)
 router.get('/mainBanner',verifyAdmin,adminController.mainBanner)
 
@@ -118,6 +122,12 @@ router.get('/add-bannerMain',verifyAdmin,adminController.mainBannerget)
 router.post('/add-bannerMain',verifyAdmin,upload2.array('image') ,adminController.mainBannerpost)
 
 router.get('/delete-mainBanner/:id',verifyAdmin,adminController.deleteMainBanner)
+
+router.get('/catabanner',adminController.cataBannerget)
+router.get('/addCataBanner',adminController.addCataBanner)
+router.post('/add-cataBanner',upload2.array('image'),adminController.addCataBannerPost)
+
+router.get('/delete-cataBanner/:id',adminController.deleteCataBanner)
 
 
 

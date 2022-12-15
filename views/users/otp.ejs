@@ -60,7 +60,7 @@
 <script>
 
 function validation() {
-      
+     
         const mobile = document.getElementById('mobile')
         const mobileValue = mobile.value?.trim();
        const err1 = mobile.parentElement.querySelector("p")
@@ -78,12 +78,22 @@ function validation() {
             submit1(mobileValue);
         }
         function submit1(mobileValue) {
-
+            
             fetch(`/otp-login?mobileNumber=${mobileValue}`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json'
                 }
+            }).then((res)=>res.json())
+            .then((response)=>{
+                if(response.value){
+               
+                }else{
+                    Swal.fire(response.message)
+                }
+
+            }).catch((error)=>{
+                Swal.fire(error.message)
             })
         }
     }
