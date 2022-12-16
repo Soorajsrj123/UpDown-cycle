@@ -42,7 +42,7 @@ module.exports = {
     let mainBanner = await productHelpers.getBanner();
     let cataBanner= await productHelpers.getCataBanner()
     if (user) {
-      let cartCount = await userHelpers.getCartCount(req.session.user._id);
+      let cartCount = await userHelpers.getCartCount(req?.session?.user?._id);
 
       res.render("index", { nav: true, user, cartCount, product, mainBanner,cataBanner });
     } else {
@@ -144,7 +144,7 @@ module.exports = {
   shopPage: (req, res, next) => {
     console.log(req.query,"query");
     productHelpers.getAllproducts(req.query).then(async (products) => {
-      let cartCount = await userHelpers.getCartCount(req.session.user._id);
+      let cartCount = await userHelpers.getCartCount(req?.session?.user?._id);
       res.render("users/user-shop", {
         products,
         nav: true,
@@ -157,9 +157,9 @@ module.exports = {
   },
 
   productPage: (req, res, next) => {
-    let proId = req.params.id;
+    let proId = req?.params?.id;
     productHelpers.getProductDetails(proId).then(async (products) => {
-      let cartCount = await userHelpers.getCartCount(req.session.user._id);
+      let cartCount = await userHelpers.getCartCount(req?.session?.user?._id);
       res.render("users/user-product", {
         products,
         nav: true,
@@ -170,10 +170,10 @@ module.exports = {
   },
 
   cartPage: async (req, res) => {
-    let products = await userHelpers.getCartProducts(req.session.user._id);
+    let products = await userHelpers.getCartProducts(req?.session?.user?._id);
     console.log(products);
-    let cartCount = await userHelpers.getCartCount(req.session.user._id);
-    let total = await userHelpers.getTotalAmmount(req.session.user._id);
+    let cartCount = await userHelpers.getCartCount(req?.session?.user?._id);
+    let total = await userHelpers.getTotalAmmount(req?.session?.user?._id);
     console.log(total, "two total");
     let offertotal = total?.offertotal;
     total = total?.total;
@@ -210,8 +210,8 @@ module.exports = {
     userId = req.session.user._id;
     let address = await userHelpers.getaddress(userId);
     let coupondata = await couponHelpers.getallcoupon();
-    let cartCount = await userHelpers.getCartCount(req.session.user._id);
-    let total = await userHelpers.getTotalAmmount(req.session.user._id);
+    let cartCount = await userHelpers.getCartCount(req?.session?.user?._id);
+    let total = await userHelpers.getTotalAmmount(req?.session?.user?._id);
     let offertotal = total?.offertotal;
     total = total?.total;
     res.render("users/checkout", {
@@ -259,10 +259,10 @@ module.exports = {
     res.render("users/successpage");
   },
   getorders: async (req, res) => {
-    req.body.userId = req.session.user._id;
-    let orderItems = await userHelpers.getorders(req.body.userId);
+    req.body.userId = req?.session?.user?._id;
+    let orderItems = await userHelpers.getorders(req?.body?.userId);
     console.log("orderssss", orderItems);
-    let cartCount = await userHelpers.getCartCount(req.session.user._id);
+    let cartCount = await userHelpers.getCartCount(req?.session?.user?._id);
 
     res.render("users/orders", {
       orderItems,
@@ -279,9 +279,9 @@ module.exports = {
   },
 
   userProfile: async (req, res) => {
-    userId = req.session.user._id;
+    userId = req?.session?.user?._id;
     let userdetails = await userHelpers.userdetails(userId);
-    let cartCount = await userHelpers.getCartCount(req.session.user._id);
+    let cartCount = await userHelpers.getCartCount(req?.session?.user?._id);
     userHelpers.getaddress(userId).then((address) => {
       // console.log("kjhgfd", address, "kjhg");
       res.render("users/profile", {
@@ -476,14 +476,14 @@ module.exports = {
     });
   },
   wishlistpost: (req, res) => {
-    console.log(req.params.id);
-    productHelpers.addwishlist(req.session.user._id, req.params.id).then((response) => {
+   
+    productHelpers.addwishlist(req?.session?.user?._id, req?.params?.id).then((response) => {
         res.send(response);
       });
   },
   getWishlist: async (req, res) => {
-    let cartCount = await userHelpers.getCartCount(req.session.user._id);
-    productHelpers.getAllWishlist(req.session.user._id).then((product) => {
+    let cartCount = await userHelpers.getCartCount(req?.session?.user?._id);
+    productHelpers.getAllWishlist(req?.session?.user?._id).then((product) => {
       console.log(product, "////////////");
       res.render("users/wishlist", {
         nav: true,

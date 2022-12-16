@@ -1,8 +1,5 @@
-const { user, product } = require("../config/connection");
 var bcrypt = require("bcrypt");
 var db = require("../config/connection");
-const { getProductDetails } = require("./productHelpers");
-const { response } = require("../app");
 const { ObjectId } = require("mongodb");
 const Razorpay = require("razorpay");
 
@@ -44,7 +41,8 @@ module.exports = {
   doSignUp: (userData) => {
     return new Promise(async (resolve, reject) => {
       try {
-        db.user.find({ email: userData.email }).then(async (data) => {
+        // await User.findOne({ "$or": [ { email: email }, { phone: phone} ] })
+        db.user.find({"$or":[{ email: userData.email },{phone:userData.phone}]}).then(async (data) => {
           let response = {};
           if (data.length != 0) {
             resolve({ status: false });
@@ -166,8 +164,8 @@ module.exports = {
       try {
         let cart = await db.cart.findOne({ user: userId });
         if (cart) {
-          for (i = 0; i < cart.products.length; i++) {
-            count += cart.products[i].quantity;
+          for (i = 0; i < cart?.products?.length; i++) {
+            count += cart?.products[i]?.quantity;
           }
         }
         console.log(count);
