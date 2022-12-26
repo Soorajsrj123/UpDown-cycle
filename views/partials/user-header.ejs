@@ -1,3 +1,51 @@
+
+<style>
+  .search-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+  }
+  .card {
+    border-bottom: 0.4px solid black;
+    /* background-color: white; */
+    padding: 2.0rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  .card>.header {
+    margin-bottom: .25rem;
+  }
+  .card>.body {
+    font-size: .8rem;
+    color: #777;
+  }
+  .hide {
+    display: none;
+  }
+  .sdiv {
+    position: absolute;
+    z-index: 100;
+    top: 126px;
+    transform: translateX(83%);
+    width:  570px;
+  }
+  .searchBar {
+    z-index: 3;
+  }
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="page-wrapper">
     <header class="header header-intro-clearance header-4">
         <div class="header-top ">
@@ -76,12 +124,12 @@
                         <i class="icon-bars"></i>
                     </button>
                     
-                    <a href="index.html" class="logo">
+                    <a href="/" class="logo">
                         <h4>UPDOWN CYCLES</h4>
                     </a>
                 </div><!-- End .header-left -->
 
-                <div class="header-center">
+                <!-- <div class="header-center">
                     <div class="header-search header-search-extended header-search-visible d-none d-lg-block">
                         <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
                         <form action="#" method="get">
@@ -89,10 +137,33 @@
                                 <label for="q" class="sr-only">Search</label>
                                 <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
                                 <input type="search" class="form-control"  onkeyup="closeSearch()"  name="q" id="q" data-search placeholder="Search product ..." required>
-                            </div><!-- End .header-search-wrapper -->
+                            </div>
+                            End .header-search-wrapper
                         </form>
-                    </div><!-- End .header-search -->
+                    </div>
+                    End .header-search
+                </div> -->
+
+
+
+                <div class="header-center searchFullBox" style="position: relative;">
+                  <div class="header-search header-search-extended header-search-visible d-none d-lg-block" >
+                    <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
+                    <form action="#">
+                      <div class="header-search-wrapper search-wrapper-wide" style="border-radius: 0px !important; position: relative;">
+                        <label for="search" class="sr-only">Search</label>
+                        <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+                        <input onkeyup="closeSearch()" autocomplete="off" type="search" class="form-control searchBar" name="q" id="search" data-search placeholder="Search product ..." required>
+                      </div><!-- End .header-search-wrapper -->
+                    </form>
+                  </div><!-- End .header-search -->
                 </div>
+          
+
+
+
+
+
 
                 <div class="header-right">
                    <!-- End .cart-dropdown -->
@@ -184,7 +255,7 @@
 
     <!-- FOR SEARCH IN SHOP PAGE -->
   
-    <div class=" mx-auto sdiv">
+    <!-- <div class=" mx-auto sdiv">
         <div class="user-cards" data-user-cards-container></div>
         <template data-user-template>
           <div class="card" id="cardSearch" onclick="myFunction(this.querySelector('p'))" style="position: relative;">
@@ -194,11 +265,23 @@
             <img data-img src="" style="height: 50px; width:50px; position: absolute; right: 10px;">
           </div>
         </template>
+      </div> -->
+
+      <div class=" sdiv d-none d-lg-block">
+        <div class="user-cards" data-user-cards-container></div>
+        <template data-user-template >
+          <div class="card" id="cardSearch" onclick="myFunction(this.querySelector('p'))" style="position: relative;">
+            <div class="header" data-header></div>
+            <div class="body" data-body></div>
+            <p class="_id" id="idSearch" hidden data-id></p>
+            <img data-img src="" style="height: 40px;padding-bottom:4px ; width:40px; position: absolute; right: 10px;">
+          </div>
+        </template>
       </div>
 
        <!-- FOR SEARCH IN SHOP PAGE END -->  
 
-    <script>
+    <!-- <script>
 
  const userCardTemplate=document.querySelector("[data-user-template]")
  
@@ -275,30 +358,95 @@ const value=e.target.value.trim().toLowerCase()
 
 
 
-function swalsignout(){
 
-    Swal.fire({
-  title: 'Are you sure?',
-  text: "you will be logout",
-  icon: 'warning',
-  showCancelButton: true,
-  confirmButtonColor: '#3085d6',
-  cancelButtonColor: '#d33',
-  confirmButtonText: 'Yes,LogOut!'
-}).then((result) => {
-  if (result.isConfirmed) {
-    Swal.fire(
-      'successfully logout!',
-      '',
-      'success'
-    ).then(()=>{
-         location.href="/logout"
-    })
-  }
-})
 
-}
+
 
  
 
-    </script>
+    </script> -->
+
+    <script>
+        const userCardTemplate = document.querySelector("[data-user-template]")
+      const userCardContainer = document.querySelector("[data-user-cards-container]")
+      const searchInput = document.querySelector("[data-search]")
+      let boolSearch = userCardContainer.classList
+      if (searchInput.value.trim().length == 0) {
+        boolSearch.add("hide")
+      } else {
+        boolSearch.remove("hide")
+      }
+      let products = [new Set()]
+      searchInput.addEventListener("input", e => {
+        const value = e.target.value.trim().toLowerCase()
+        console.log(products,"=>pro");
+        products.forEach(product => {
+          const isVisible = product.name.toLowerCase().includes(value) || product.category.includes(value)
+          product.element.classList.toggle("hide", !isVisible)
+        })
+      })
+        fetch("/getProductData", {
+          method: 'get',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data,"dddddddddddddaaaaaaaaattttttta");
+          products = data.map(product => {
+            const card = userCardTemplate.content.cloneNode(true).children[0]
+            const header = card.querySelector("[data-header]")
+            const body = card.querySelector("[data-body]")
+            const id = card.querySelector("[data-id]")
+            const image = card.querySelector("[data-img]")
+            header.textContent = product.name
+            body.textContent = product.catagory
+            id.textContent = product._id
+            image.src = `/productimages/${product.img[0]}`
+            userCardContainer.append(card)
+            return {
+              name: product.name,
+              category: product.catogory,
+              id: product._id,
+              element: card
+            }
+          })
+        })
+      function myFunction(input) {
+        let tag = input.innerText
+        location.href = `/products/${tag}`
+      }
+      function closeSearch() {
+        let boolSearch = userCardContainer.classList
+        if (searchInput.value.trim().length == 0) {
+          boolSearch.add("hide")
+        } else {
+          boolSearch.remove("hide")
+        }
+      }
+
+      function swalsignout(){
+
+Swal.fire({
+title: 'Are you sure?',
+text: "you will be logout",
+icon: 'warning',
+showCancelButton: true,
+confirmButtonColor: '#3085d6',
+cancelButtonColor: '#d33',
+confirmButtonText: 'Yes,LogOut!'
+}).then((result) => {
+if (result.isConfirmed) {
+Swal.fire(
+  'successfully logout!',
+  '',
+  'success'
+).then(()=>{
+     location.href="/logout"
+})
+}
+})
+      }
+    
+      </script>

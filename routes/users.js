@@ -15,18 +15,22 @@ const Client = require("twilio")(config.accountId, config.authToken);
 /* GET users listing. */
 
 // home page
+
 router.get("/", userController.landingPage);
 
 // user login
+
 router.get("/login", userController.loginPageGet);
 
 router.post("/login", userController.loginPagePost);
+
 // user SIGNUP
 
 router.get("/signup", userController.signUpPageGet);
 
 router.post("/signup", userController.signUpPagePost);
 
+//USER LOGOUT
 router.get("/logout", userController.logout);
 
 //OTP LOGIN
@@ -37,7 +41,7 @@ router.get("/otp-login", userController.otpLogin);
 router.get("/otp-verify", userController.otpVerify);
 
 // shop page
-router.get("/shop", userController.shopPage);
+router.get("/shop",userController.shopPage);
 
 // product page  //page for product zoom
 router.get("/products/:id", verifyLogin, userController.productPage);
@@ -50,56 +54,89 @@ router.get("/cart", verifyLogin, userController.cartPage);
 // for get prod details
 router.get("/add-to-cart/:id", verifyLogin, userController.addToCart);
 
-// USER logout
+
 
 // put
 router.put("/change-product-quantity",verifyLogin,userController.changeQuantity);
 
+//REMOVE PRODUCT FROM CART
 router.post("/remove-product", verifyLogin, userController.removeProductCart);
+
+//CHECKOUT
 
 router.get("/check-out", verifyLogin, userController.checkoutGet);
 
 router.post("/check-out", verifyLogin, userController.checkoutPost);
 
+//ORDER MANAGEMENT
+
+//GET ORDERS
 router.get("/orders", verifyLogin, userController.getorders);
-
+//CANCEL ORDER
 router.put("/cancelOrder", verifyLogin, userController.cancelOrder);
-router.get("/success", verifyLogin, userController.success);
-
-router.get("/profile", verifyLogin, userController.userProfile);
-router.post("/edit-address", verifyLogin, userController.editAddress);
-
-router.get("/address", verifyLogin, userController.getaddress);
-
-router.get("/filladdress/:id", verifyLogin, userController.filladress);
-
-router.post("/verify-payment", verifyLogin, userController.verifyPayment);
-router.post("/deleteAddress", verifyLogin, userController.removeAddress);
-router.get("/check-cart-quantity/:id",verifyLogin, userController.checkCartQuantity
-);
-
-router.get("/paypal-success", verifyLogin, userController.paypalSuccess);
-
-router.post("/create-order", verifyLogin, userController.paypalOrder);
-router.post("/add-address", verifyLogin, userController.addAddress);
-router.post("/changeUserProfile",verifyLogin,userController.changeUserProfile);
-
+//RETURN ORDERS
 router.post("/return-order", verifyLogin, userController.returnOrder);
 
-router.get("/downloadinvoice/:id", verifyAdmin, userController.downloadinvoice);
+//SUCCESS PAGE
+router.get("/success", verifyLogin, userController.success);
 
-router.post("/add-wishlist/:id", verifyAdmin, userController.wishlistpost);
+//USER PROFILE
+router.get("/profile", verifyLogin, userController.userProfile);
 
+//EDIT ADDRESS
+router.post("/edit-address", verifyLogin, userController.editAddress);
+
+//GET ADDRESS
+router.get("/address", verifyLogin, userController.getaddress);
+
+//FILL ADDRESS
+router.get("/filladdress/:id", verifyLogin, userController.filladress);
+
+//VERIFY PAYMENT
+router.post("/verify-payment", verifyLogin, userController.verifyPayment);
+//DELETE ADDRESS
+router.post("/deleteAddress", verifyLogin, userController.removeAddress);
+
+//CHECK CART QUANTITY
+
+router.get("/check-cart-quantity/:id",verifyLogin, userController.checkCartQuantity);
+
+//PAYPAL SUCCESS
+router.get("/paypal-success", verifyLogin, userController.paypalSuccess);
+
+//PAYPAL ORDER
+router.post("/create-order", verifyLogin, userController.paypalOrder);
+
+// ADD ADDRESS
+router.post("/add-address", verifyLogin, userController.addAddress);
+
+//EDIT PROFILE
+router.post("/changeUserProfile",verifyLogin,userController.changeUserProfile);
+
+
+
+//DOWNLOAD INVOIOCE
+router.get("/downloadinvoice/:id", verifyLogin, userController.downloadinvoice);
+
+//WISHLIST 
+router.post("/add-wishlist/:id", verifyLogin, userController.wishlistpost);
 router.get("/wishlist",verifyLogin, userController.getWishlist);
-
+//REMOVE WISHLIST
 router.post("/remove-wishListProduct",verifyLogin, userController.removeWishListProduct);
 
+//COUPON
 router.post("/apply-coupon",verifyLogin, userController.applyCoupon);
 
 // FOR SEARCH PRODUCT
-
 router.get("/getProductData",verifyLogin, userController.productSearch);
 
+
+router.get("/forgotPassword",userController.forgotPasswordGet)
+
+router.get("/forgot-otp-login", userController.otpLogin)
+router.get("/forgot-otp-verify", userController.otpVerify);
+router.get("/forgotPasswordGet",verifyLogin,userController.passwordUpdate)
+router.post('/passwordChange',verifyLogin,userController.changePassword)
 // router.get('/page', (req, res, next) => {
 //   res.render('users/user-page')
 // })

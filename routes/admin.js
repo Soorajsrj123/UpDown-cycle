@@ -123,21 +123,21 @@ router.post('/add-bannerMain',verifyAdmin,upload2.array('image') ,adminControlle
 
 router.get('/delete-mainBanner/:id',verifyAdmin,adminController.deleteMainBanner)
 
-router.get('/catabanner',adminController.cataBannerget)
-router.get('/addCataBanner',adminController.addCataBanner)
-router.post('/add-cataBanner',upload2.array('image'),adminController.addCataBannerPost)
+router.get('/catabanner',verifyAdmin,adminController.cataBannerget)
+router.get('/addCataBanner',verifyAdmin,adminController.addCataBanner)
+router.post('/add-cataBanner',verifyAdmin,upload2.array('image'),adminController.addCataBannerPost)
 
-router.get('/delete-cataBanner/:id',adminController.deleteCataBanner)
+router.get('/delete-cataBanner/:id',verifyAdmin,adminController.deleteCataBanner)
 
 
 
-router.get('/coupon',adminController.getallcoupon)
+router.get('/coupon',verifyAdmin,adminController.getallcoupon)
 
-router.get('/add-coupon',adminController.addCoupon)
+router.get('/add-coupon',verifyAdmin,adminController.addCoupon)
 
-router.post('/add-coupon',adminController.addcoupon)
-router.get('/generate-coupon-code',adminController.generateCoupon)
+router.post('/add-coupon',verifyAdmin,adminController.addcoupon)
+router.get('/generate-coupon-code',verifyAdmin,adminController.generateCoupon)
 
-router.get('/delete-coupon/:id',adminController.deleteCoupon)
+router.get('/delete-coupon/:id',verifyAdmin,adminController.deleteCoupon)
 
 module.exports = router;

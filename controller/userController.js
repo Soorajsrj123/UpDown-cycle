@@ -60,13 +60,13 @@ module.exports = {
   },
 
   loginPagePost: (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     userHelpers.doLogin(req.body).then((response) => {
-      console.log("my respp", response);
+      // console.log("my respp", response);
       if (response.status) {
         req.session.loggedIn = true;
         req.session.user = response.user;
-        res.send({ value: "success" });
+        res.send({ value: "success"});
       } else if (response.blocked) {
         res.send({ value: "blocked" });
       } else {
@@ -98,7 +98,6 @@ module.exports = {
       .isUser(req.query.mobileNumber)
       .then((userExsist) => {
         if (userExsist) {
-          console.log("user ind mone");
           Client.verify
             .services(config.serviceId)
             .verifications.create({
@@ -106,7 +105,7 @@ module.exports = {
               channel: "sms",
             })
             .then((data) => {
-              console.log("soorya ethi mone ");
+              // console.log("soorya ethi mone ");
               // req.session.user = data;
               // req.session.loggedIn = true;
               res.send({ value: true });   //////HEAD ERROR
@@ -171,10 +170,10 @@ module.exports = {
 
   cartPage: async (req, res) => {
     let products = await userHelpers.getCartProducts(req?.session?.user?._id);
-    console.log(products);
+    // console.log(products);
     let cartCount = await userHelpers.getCartCount(req?.session?.user?._id);
     let total = await userHelpers.getTotalAmmount(req?.session?.user?._id);
-    console.log(total, "two total");
+    // console.log(total, "two total");
     let offertotal = total?.offertotal;
     total = total?.total;
     res.render("users/cart", {
@@ -195,7 +194,7 @@ module.exports = {
   changeQuantity: (req, res) => {
     userHelpers.changeProductQuantity(req.body).then(async (response) => {
       response.total = await userHelpers.getTotalAmmount(req.session.user._id);
-      console.log(response.total, "mmmmmmmmmm");
+      // console.log(response.total, "mmmmmmmmmm");
 
       res.json(response);
     });
@@ -229,11 +228,10 @@ module.exports = {
     let totalAmmount = await userHelpers.getTotalAmmount(req.session.user._id);
     let total = totalAmmount.offertotal;
     total = total - couponAmount; //this is global variable
-    console.log(req.body, "raor body");
-    console.log(total, "raor total");
+    // console.log(req.body, "raor body");
+    // console.log(total, "raor total");
     req.body.userId = req.session.user._id;
-    userHelpers
-      .placeOrder(req.body, total, req.session.coupon)
+    userHelpers.placeOrder(req.body, total, req.session.coupon)
       .then((response) => {
         if (req.body.payment == "COD") {
           req.session.coupon = "";
@@ -241,7 +239,10 @@ module.exports = {
 
           res.send({ success: true });
         } else if (req.body.payment == "razorpay") {
-          userHelpers.generatRazorpay(req.body, total).then((response) => {
+          // console.log("razor else if");
+          //     console.log(req.body, "raor body");
+
+          userHelpers.generatRazorpay(req.session.user._id, total).then((response) => {
             req.session.coupon = "";
             couponAmount = 0;
             console.log(response, "razor response");
@@ -250,7 +251,7 @@ module.exports = {
         } else {
           req.session.coupon = "";
           couponAmount = 0;
-          res.json({ paypal: true });
+          res.json({ paypal: true,totalPrice:total });
         }
       });
   },
@@ -272,7 +273,7 @@ module.exports = {
     });
   },
   cancelOrder: (req, res) => {
-    console.log(req.body, "naa body");
+    // console.log(req.body, "naa body");
     userHelpers.cancelOrder(req.body, req.session.user._id).then((response) => {
       res.json(response);
     });
@@ -304,24 +305,24 @@ module.exports = {
   filladress: (req, res) => {
     userId = req.session.user._id;
     addrsId = req.params.id;
-    console.log(addrsId);
+    // console.log(addrsId);
     userHelpers.filladress(userId, addrsId).then((data) => {
-      console.log(data[0].address,"my address");
+      // console.log(data[0].address,"my address");
       res.send(data[0].address);
     });
   },
   verifyPayment: (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     userHelpers
       .verifyPayment(req.body)
       .then(() => {
-        userHelpers.changePaymentStatus(req.body["order[receipt]"]).then(() => {
-          console.log("payment successfull");
+        userHelpers.changePaymentStatus(req.body["order[receipt]"],req.session.user._id).then(() => {
+          // console.log("payment successfull");
           res.json({ status: true });
         });
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         res.json({ status: false });
       });
   },
@@ -342,13 +343,13 @@ module.exports = {
  
     let orderId = "" + orderId1;
    
-    userHelpers.changePaymentStatus(orderId).then((data) => {
+    userHelpers.changePaymentStatus(orderId,req.session.user._id).then((data) => {
       res.json({ status: true });
     });
   },
   paypalOrder: async (req, res) => {
     const request = new paypal.orders.OrdersCreateRequest();
-    const total = 1000;
+    const total = req.body.total;
     request.prefer("return=representation");
     request.requestBody({
       intent: "CAPTURE",
@@ -370,14 +371,14 @@ module.exports = {
 
     try {
       const order = await paypalClient.execute(request);
-      console.log(order);
+      // console.log(order);
       res.json({ id: order.result.id });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }
   },
   addAddress: (req, res) => {
-    console.log(req.body, "jgghghj");
+    // console.log(req.body, "jgghghj");
     userId = req.session.user._id;
     userHelpers.addressAdd(req.body, userId).then((response) => {
       res.json(response);
@@ -385,7 +386,7 @@ module.exports = {
   },
 
   checkCartQuantity: (req, res) => {
-    console.log(req.params.id, "producttttttt");
+    // console.log(req.params.id, "producttttttt");
     userHelpers
       .checkCartQuantity(req.session.user._id, req.params.id)
       .then((quantity) => {
@@ -400,12 +401,12 @@ module.exports = {
   },
 
   changeUserProfile: async (req, res) => {
-    console.log(req.body, "first body");
+    // console.log(req.body, "first body");
 
     let user = await db.user.findOne({ _id: req.session.user._id });
 
     userHelpers.editProfile(req.body, user).then((response) => {
-      console.log("response", response);
+      // console.log("response", response);
       if (response.status) {
         console.log("succ");
         res.json({ status: true });
@@ -417,7 +418,7 @@ module.exports = {
   },
   downloadinvoice: (req, res) => {
     let orderId = req.params.id;
-    console.log(orderId, "idsssss");
+    // console.log(orderId, "idsssss");
     let userId = req.session.user._id;
     userHelpers.getdata(orderId, userId).then((details) => {
       res.send(details[0]);
@@ -425,7 +426,7 @@ module.exports = {
   },
 
   returnOrder: (req, res) => {
-    console.log(req.body, "my body");
+    // console.log(req.body, "my body");
     userHelpers
       .returnProduct(req.body, req.session.user._id)
       .then((response) => {
@@ -484,7 +485,7 @@ module.exports = {
   getWishlist: async (req, res) => {
     let cartCount = await userHelpers.getCartCount(req?.session?.user?._id);
     productHelpers.getAllWishlist(req?.session?.user?._id).then((product) => {
-      console.log(product, "////////////");
+      // console.log(product, "////////////");
       res.render("users/wishlist", {
         nav: true,
         user: true,
@@ -498,4 +499,27 @@ module.exports = {
       res.json(response);
     });
   },
+
+  forgotPasswordGet:(req,res)=>{
+    
+    res.render('users/forgotpassword')
+  },
+  passwordUpdate:(req,res)=>{
+    res.render('users/changePassword')
+  },
+  changePassword:async(req,res)=>{
+
+    console.log(req.body,"body");
+    // let user=await db.user.findOne({_id:req.session.user._id})
+    userHelpers.changePassword(req.body,req.session.user._id).then((response)=>{
+      if(response.status){
+        console.log("succ");
+        res.json({ status: true });
+      }else{
+        console.log("faill");
+        res.json({ status: false });
+
+      }
+    })
+  }
 };

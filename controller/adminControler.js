@@ -66,16 +66,42 @@ module.exports = {
       });
     });
   },
-  editProductPost: (req, res) => {
+  editProductPost:async (req, res) => {
+
+ //converts string to array 
+ let index = req.body.indexOfImage.split(',').map(function(item) {
+  return parseInt(item, 10);
+})
+//remove duplicate values in array
+index=index.filter((item,i)=>index.indexOf(item)==i)
+
+
+
+
     let prodId = req.params.id;
     const files = req.files;
     const fileName = files.map((file) => {
       return file.filename;
     });
-    const product = req.body;
-    product.img = fileName;
 
-    productHelpers.editProduct(product, prodId).then((data) => {
+
+ let prodata=await productHelpers.getProductDetails(prodId)
+
+                var image=prodata.img
+              for(i=0;i<=index.length;i++){
+                image[index[i]]=fileName[i]
+              }
+
+
+
+
+
+    const product = req.body;
+    product.img = image;
+
+
+
+    productHelpers.editProduct(product, prodId).then(() => {
       res.redirect("/admin/products");
     });
   },
@@ -86,7 +112,9 @@ module.exports = {
     });
   },
   userManagement: (req, res) => {
-    adminHelpers.getUserDetails().then((user) => {
+    const pageNum=req.query.page
+    const perPage=2
+    adminHelpers.getUserDetails(pageNum,perPage).then((user) => {
       res.render("admin/users", { layout, user, nav: true });
     });
   },

@@ -11,7 +11,9 @@
     
                         <ul class="nav nav-pills nav-fill" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="register-tab-2" data-toggle="tab" href="#register-2"
+                                <div class="d-flex justify-content-center ">
+                                    <img  src="/assets/images/uptownlogo.jpg" style="width:110px;" >
+                                </div>                                <a class="nav-link active" id="register-tab-2" data-toggle="tab" href="#register-2"
                                     role="tab" aria-controls="register-2" aria-selected="true">SIGN UP</a>
                             </li>
                         </ul>
@@ -165,7 +167,7 @@
             .then((res) => res.json())
             .then((res) => {
                 if (res.value == "success") {
-                    window.location.href = '/'
+                    window.location.href = '/login'
                 } else {
                     var existError = document.getElementById('existError')
                     existError.innerText = res.value

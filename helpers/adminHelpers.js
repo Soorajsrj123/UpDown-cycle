@@ -7,13 +7,21 @@ let data=adminData.adminId
 module.exports = {
 
 
-    getUserDetails: () => {
+      getUserDetails: (pageCount,perPage) => {
         return new Promise(async (resolve, reject) => {
+            let docCount;
             let user = await db.user.find({})
-
-            resolve(user)
-
-
+            .countDocuments()
+            .then(documents=>{
+                docCount=documents
+                return  db.user.find({})
+                .skip((pageCount-1)*perPage)
+                .limit(perPage)
+            })
+            .then(user=>{
+                console.log(user,"page user");
+                resolve(user)
+            })
         })
     },
     blockUser: (userId) => {
@@ -93,7 +101,6 @@ module.exports = {
                 let orderIndex = orderDetails[0].orders.findIndex(order =>order._id == orderId)
                
                 let productIndex = orderDetails[0].orders[orderIndex].productDetails.findIndex(product => product._id == proId)
-                
 
                 db.order.updateOne(
                     {

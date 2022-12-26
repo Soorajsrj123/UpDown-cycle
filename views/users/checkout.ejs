@@ -670,14 +670,21 @@ Follow me on Codepen
         },
         method: 'post',
         success: (response) => {
+          console.log(response,"suss response");
           if (response.success) {
+            
             setTimeout(() => {
               window.location.href = '/success'
             }, 1000)
 
           } else if (response.paypal == true) {
-            paypalPayment()
+          
+
+            paypalPayment(response.totalPrice)
           } else {
+            
+
+            console.log("comes here razor");
             razorpayPayment(response)
           }
 
@@ -688,32 +695,6 @@ Follow me on Codepen
   }
 
 
-// FILL ADDRESSS
-
-function fillAddress(addsId) {
-  
-      $.ajax({
-        url: '/filladdress/' + addsId,
-        method: 'get',
-        success(response){
-          document.getElementById('firstname').value=response.firstname
-          document.getElementById('lastname').value=response.lastname
-          document.getElementById('country').value=response.country
-          document.getElementById('streetaddress').value=response.street
-          document.getElementById('city').value=response.city
-          document.getElementById('state').value=response.state
-          document.getElementById('pincode').value=response.pincode
-          document.getElementById('phone').value=response.phone
-          document.getElementById('email').value=response.email
-
-        }
-      })
-     
-    }
-
-
-// FILL ADDRESS END
-
 
 
 
@@ -723,15 +704,17 @@ function fillAddress(addsId) {
 
 
   function razorpayPayment(order) {
+    console.log(order,"razor order");
     var options = {
       "key": "rzp_test_kztxhxAp7JryOm", // Enter the Key ID generated from the Dashboard
       "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
       "currency": "INR",
-      "name": "updown ",
+      "name": "uptown ",
       "description": "Test Transaction",
       "image": "https://example.com/your_logo",
       "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
       "handler": function(response) {
+        console.log("before verify");
         alert(response.razorpay_payment_id);
         alert(response.razorpay_order_id);
         alert(response.razorpay_signature)
@@ -750,19 +733,32 @@ function fillAddress(addsId) {
       }
     };
     var rzp1 = new Razorpay(options);
+    // rzp1.on('payment.failed', function(response) {
+    //       alert("payment failed")
+    //       alert(response.error.code);
+    //       alert(response.error.description);
+    //       alert(response.error.source);
+    //       alert(response.error.step);
+    //       alert(response.error.reason);
+    //       alert(response.error.metadata.order_id);
+    //       alert(response.error.metadata.payment_id);
+    //     });
     rzp1.open();
   }
 
   function verifyPayment(payment, order) {
-
+      console.log("verify called");
     $.ajax({
       url: '/verify-payment',
+      
       data: {
         payment,
         order
       },
       method: 'post',
+     
       success: (response) => {
+        alert("verify res come")
         if (response.status) {
           window.location.href = '/success'
         } else {
@@ -773,7 +769,7 @@ function fillAddress(addsId) {
 
   }
 
-  function paypalPayment() {
+  function paypalPayment(total) {
     console.log("heyyy/API");
     paypal
       .Buttons({
@@ -784,9 +780,7 @@ function fillAddress(addsId) {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                items: [{
-                  id: 1,
-                }],
+                  total:total,
               }),
             })
             .then(res => {
@@ -822,6 +816,37 @@ function fillAddress(addsId) {
       })
       .render("#paypal")
   }
+
+
+// FILL ADDRESSS
+
+function fillAddress(addsId) {
+  
+      $.ajax({
+        url: '/filladdress/' + addsId,
+        method: 'get',
+        success(response){
+          document.getElementById('firstname').value=response.firstname
+          document.getElementById('lastname').value=response.lastname
+          document.getElementById('country').value=response.country
+          document.getElementById('streetaddress').value=response.street
+          document.getElementById('city').value=response.city
+          document.getElementById('state').value=response.state
+          document.getElementById('pincode').value=response.pincode
+          document.getElementById('phone').value=response.phone
+          document.getElementById('email').value=response.email
+
+        }
+      })
+     
+    }
+
+
+// FILL ADDRESS END
+
+
+
+
 </script>
 
 <script>
@@ -862,9 +887,7 @@ function fillAddress(addsId) {
         }
       }),
 
-
-
-
+      
       cpnBtn.onclick = function() {
         navigator.clipboard.writeText(cpnCode.innerHTML);
         cpnBtn.innerHTML = "COPIED";

@@ -54,8 +54,14 @@ module.exports = {
   editProduct: (data, prodId) => {
     return new Promise(async (resolve, reject) => {
       try {
-        db.product
-          .updateOne(
+        let dbProData= await db.product.findOne({_id:prodId})
+
+        if(data.img.length==0){
+          data.img=dbProData.img
+        }else{
+
+          await db.product.updateOne(
+
             { _id: prodId },
             {
               name: data.name,
@@ -68,9 +74,10 @@ module.exports = {
               offerprice: data.offerprice,
             }
           )
-          .then((data) => {
-            resolve(data);
-          });
+
+        }
+      resolve()
+         
       } catch (error) {
         console.log(error);
       }

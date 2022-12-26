@@ -42,21 +42,23 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       try {
         // await User.findOne({ "$or": [ { email: email }, { phone: phone} ] })
-        db.user.find({"$or":[{ email: userData.email },{phone:userData.phone}]}).then(async (data) => {
-          let response = {};
-          if (data.length != 0) {
-            resolve({ status: false });
-          } else {
-            userData.password = await bcrypt.hash(userData.password, 10);
+        db.user
+          .find({ $or: [{ email: userData.email }, { phone: userData.phone }] })
+          .then(async (data) => {
+            let response = {};
+            if (data.length != 0) {
+              resolve({ status: false });
+            } else {
+              userData.password = await bcrypt.hash(userData.password, 10);
 
-            let data = db.user(userData);
-            data.save();
-            response.value = userData;
-            response.status = true;
-            response.data = data.insertedId;
-            resolve(response);
-          }
-        });
+              let data = db.user(userData);
+              data.save();
+              response.value = userData;
+              response.status = true;
+              response.data = data.insertedId;
+              resolve(response);
+            }
+          });
       } catch (error) {
         console.log(error);
       }
@@ -276,7 +278,6 @@ module.exports = {
   },
 
   placeOrder: (order, total, couponId) => {
-    console.log(total, "aaaaaaaaaaaaaaaaa");
     return new Promise(async (resolve, reject) => {
       try {
         let components = await db.cart.aggregate([
@@ -480,10 +481,8 @@ module.exports = {
   },
 
   cancelOrder: (data, userId) => {
-
-    console.log(data,"dddddda");
+    console.log(data, "dddddda");
     let orderIds = data.orderId.trim();
-
 
     return new Promise(async (resolve, reject) => {
       let orderDetails = await db.order.find({ userId: userId });
@@ -494,12 +493,13 @@ module.exports = {
         let orderIndex = orderDetails[0].orders.findIndex(
           (order) => order._id == `${orderIds}`
         );
-        console.log(orderIndex);
+        console.log(orderIndex,"order index");
         let productIndex = orderDetails[0].orders[
           orderIndex
         ].productDetails.findIndex((product) => product._id == data.productId);
-        console.log(productIndex);
-        db.order.updateOne(
+        console.log(productIndex,"pro index");
+        db.order
+          .updateOne(
             {
               "orders._id": data.orderId,
             },
@@ -515,23 +515,85 @@ module.exports = {
           )
           .then(async (res) => {
             console.log(res, ">>>>>>>>>>>");
+          });
+
+        db.order
+          .aggregate([
+            {
+              $match: {
+                userId:userId,
+              },
+            },
+            {
+              $unwind: "$orders",
+            },
+            {
+              $unwind: "$orders.productDetails",
+            },
+            {
+              $match: {
+                $and: [
+                  {
+                    "orders._id": ObjectId(data.orderId),
+                    "orders.productDetails._id": ObjectId(data.productId),
+                  },
+                ],
+              },
+            },
+          ])
+          .then((aggrData) => {
+            console.log(aggrData,"aggdata");
+            let priceToWallet = {
+              price: 0,
+            };
+
+            let totalPrice =
+              aggrData[0].orders.productDetails.offerprice *
+              aggrData[0].orders.productDetails.quantity;
+            if (aggrData[0].orders.totalPrice - totalPrice < 0) {
+              priceToWallet.price = aggrData[0].orders.totalPrice;
+            } else {
+              priceToWallet.price = totalPrice;
+            }
+
+// CHECK IF THE PAYMENT METHOD IS COD OR NOT
+
+if(aggrData[0].orders.paymentMethod=="razorpay"|| aggrData[0].orders.paymentMethod=="paypal"){
+
+  console.log("wallet update called");
+            db.user
+            .updateOne(
+              { _id: userId },
+              {
+                $inc: {
+                  wallet: parseInt(priceToWallet.price),
+                },
+              }
+            )
+            .then((upw) => {
+              console.log(upw, "wallet updated");
+            });
+          }
+
 
           });
 
-           let quantity = await orderDetails[0].orders[orderIndex].productDetails[productIndex].quantity;
+        
 
-            db.product
-              .updateOne(
-                { _id: data.productId },
-                {
-                  $inc: { stock: quantity },
-                }
-              )
-              .then(() => {
-                resolve({ status: true });
-              });
+        let quantity = await orderDetails[0].orders[orderIndex].productDetails[
+          productIndex
+        ].quantity;
 
-           
+        db.product
+          .updateOne(
+            { _id: data.productId },
+            {
+              $inc: { stock: quantity },
+            }
+          )
+          .then(() => {
+            resolve({ status: true });
+          });
       }
     });
   },
@@ -563,10 +625,11 @@ module.exports = {
     });
   },
 
-  generatRazorpay: async (userId, total) => {
-    let order = await db.order.findOne({ user: userId });
+  generatRazorpay: async (userid, total) => {
+    
+    let order = await db.order.find({ userId: userid });
     console.log(order, "user order");
-    let orderId = order.orders.slice().reverse();
+    let orderId = order[0].orders.slice().reverse();
     orderId = orderId[0]._id;
     console.log(orderId, "this is order id");
     return new Promise((resolve, reject) => {
@@ -598,13 +661,16 @@ module.exports = {
       }
     });
   },
-  changePaymentStatus: (orderId) => {
+  changePaymentStatus: (orderId, userid) => {
+    console.log(orderId, "<=", userId, "<=");
     return new Promise(async (resolve, reject) => {
-      let orders = await db.order.find({ "orders.$._id": orderId });
+      let orders = await db.order.find({ userId: userid });
+      console.log(orders, "order doc");
       let orderIndex = orders[0].orders.findIndex(
         (order) => order._id == orderId
       );
-      // let updateData = await 
+      console.log(orderIndex, "exact order");
+      // let updateData = await
       db.order
         .updateOne(
           {
@@ -617,8 +683,7 @@ module.exports = {
           }
         )
         .then((response) => {
-          
-          resolve(response);
+          resolve();
         });
     });
   },
@@ -753,13 +818,13 @@ module.exports = {
   },
 
   editProfile: (data, user) => {
-    console.log(data, user, "body", "user");
+    // console.log(data, user, "body", "user");
     return new Promise((resolve, reject) => {
       try {
         bcrypt
           .compare(data.currentpassword, user.password)
           .then(async (checkpassword) => {
-            console.log(checkpassword, "check pass");
+            // console.log(checkpassword, "check pass");
             if (checkpassword) {
               data.newpassword = await bcrypt.hash(data.newpassword, 10);
 
@@ -775,7 +840,7 @@ module.exports = {
                   }
                 )
                 .then((response) => {
-                  console.log(response, "response");
+                  // console.log(response, "response");
 
                   resolve({ status: true });
                 });
@@ -818,7 +883,7 @@ module.exports = {
   returnProduct: (data, userId) => {
     return new Promise(async (resolve, reject) => {
       try {
-        let order = await db.order.find({});
+        let order = await db.order.find({userId:userId});
         console.log(order, "ordersss");
         // let flag = 1
         if (order) {
@@ -931,6 +996,24 @@ module.exports = {
         })
         .catch((error) => {
           reject(error);
+        });
+    });
+  },
+
+  changePassword: (data, userId) => {
+    return new Promise(async (resolve, reject) => {
+      data.newpassword = await bcrypt.hash(data.newpassword, 10);
+      db.user
+        .updateOne(
+          { _id: userId },
+          {
+            $set: {
+              password: data.newpassword,
+            },
+          }
+        )
+        .then(() => {
+          resolve({ status: true });
         });
     });
   },

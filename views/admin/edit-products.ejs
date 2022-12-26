@@ -59,29 +59,31 @@
           <p class="text-danger"></p>
           <label for="">Image</label>
           <img src="/productimages/<%= product.img[0] %>" style="width:100px; height:90px ; " id="imgView" alt="" class="my-3">
-          <input type="file" name="image" id="img" class="form-control" onchange="document.getElementById('imgView').src=window.URL.createObjectURL(this.files[0])">
+          <input type="file" name="image" id="img" class="form-control" onchange="document.getElementById('imgView').src=window.URL.createObjectURL(this.files[0]),passindex(0)">
         </div>
 
         <div class="form-group">
           <p class="text-danger"></p>
           <label for="">Image</label>
           <img src="/productimages/<%= product.img[1] %>" style="width:100px; height:90px ; " id="imgView1" alt="" class="my-3">
-          <input type="file" name="image" id="img" class="form-control"  onchange="document.getElementById('imgView1').src=window.URL.createObjectURL(this.files[0])">
+          <input type="file" name="image" id="img" class="form-control"  onchange="document.getElementById('imgView1').src=window.URL.createObjectURL(this.files[0]),passindex(1)">
         </div>
 
         <div class="form-group">
           <p class="text-danger"></p>
           <label for="">Image</label>
           <img src="/productimages/<%= product.img[2] %>" style="width:100px; height:90px ; " id="imgView2" alt="" class="my-3">
-          <input type="file" name="image" id="img" class="form-control" onchange="document.getElementById('imgView2').src=window.URL.createObjectURL(this.files[0])">
+          <input type="file" name="image" id="img" class="form-control" onchange="document.getElementById('imgView2').src=window.URL.createObjectURL(this.files[0]),passindex(2)">
         </div>
 
         <div class="form-group">
           <p class="text-danger"></p>
           <label for="">Image</label>
           <img src="/productimages/<%= product.img[3] %>" style="width:100px; height:90px ; " id="imgView3" alt="" class="my-3">
-          <input type="file" name="image" id="img" class="form-control"  onchange="document.getElementById('imgView3').src=window.URL.createObjectURL(this.files[0])">
+          <input type="file" name="image" id="img" class="form-control"  onchange="document.getElementById('imgView3').src=window.URL.createObjectURL(this.files[0]),passindex(3)">
         </div>
+
+        <input type="text" id="indexOfImage" name="indexOfImage">
 
         <button type="button" onclick="validate()" class="btn btn-primary mt-3" value="Upload">Upload</button>
         <a href="/admin/products" class="btn btn-light mt-3">cancel</a>
@@ -92,6 +94,14 @@
 
 
       <script>
+
+let index=[]
+function passindex(ind){
+  index.push(ind)
+  document.getElementById('indexOfImage').value=""+index
+}
+
+
         (e) => {
           document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
         }
@@ -145,10 +155,10 @@
           let err4 = description.parentElement.querySelector('p')
           err4.innerText = ""
 
-          let img = document.getElementById('img')
-          let imgValue = img.value
-          let err5 = img.parentElement.querySelector('p')
-          err5.innerText = ""
+          // let img = document.getElementById('img')
+          // let imgValue = img.value
+          // let err5 = img.parentElement.querySelector('p')
+          // err5.innerText = ""
 
           let offerpercentage = document.getElementById('offerpercentage')
           let offerpercentageValue = offerpercentage.value
@@ -186,10 +196,10 @@
             err4.innerText = "requies"
             flag = 2
           }
-          if (imgValue == "") {
-            err5.innerText = "requires"
-            flag = 2
-          }
+          // if (imgValue == "") {
+          //   err5.innerText = "requires"
+          //   flag = 2
+          // }
           if (offerpercentageValue == "") {
             err6.innerText = "this field is require"
             flag = 2

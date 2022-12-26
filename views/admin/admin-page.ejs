@@ -203,7 +203,31 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6 grid-margin stretch-card">
+
+
+<!-- MONTHLY -->
+
+<div class="col-md-6 grid-margin stretch-card">
+  <div class="card">
+    <div class="card-body">
+     <div class="d-flex justify-content-between">
+      <p class="card-title">Monthly sales Report</p>
+      <a href="#" class="text-info">View all</a>
+     </div>
+      <p class="font-weight-500">The total number of sessions within the date range. It is the period time a user is actively engaged with your website, page or app, etc</p>
+      <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
+      <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- MONTHLY END -->
+
+
+
+
+
+            <!-- <div class="col-md-6 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
                   <p class="card-title">Order Details</p>
@@ -229,7 +253,7 @@
                   <canvas id="order-chart"></canvas>
                 </div>
               </div>
-            </div>
+            </div> -->
             <!-- <div class="col-md-6 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
@@ -243,23 +267,7 @@
                 </div>
               </div>
             </div> -->
-<!-- MONTHLY -->
 
-             <div class="col-md-6 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
-                 <div class="d-flex justify-content-between">
-                  <p class="card-title">Monthly sales Report</p>
-                  <a href="#" class="text-info">View all</a>
-                 </div>
-                  <p class="font-weight-500">The total number of sessions within the date range. It is the period time a user is actively engaged with your website, page or app, etc</p>
-                  <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
-                  <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
-                </div>
-              </div>
-            </div>
-
-            <!-- MONTHLY END -->
 
             <!-- DAILY -->
             <div class="col-md-6 grid-margin stretch-card">
@@ -966,14 +974,18 @@ new Chart("myChart2", {
 // YEARLY SALES 
 
 
-var xValues = [YearlyData[0]?._id,YearlyData[1]?._id,YearlyData[2]?._id,YearlyData[3]?._id,YearlyData[4]?._id];
+// var xValues = [YearlyData[0]?._id,YearlyData[1]?._id,YearlyData[2]?._id,YearlyData[3]?._id,YearlyData[4]?._id];
+var xValues = [2018,2019,2020,2021,2022];
+
 
 new Chart("myChart3", {
   type: "line",
   data: {
     labels: xValues,
     datasets: [{ 
-      data: [YearlyData[0]?.totalRevenue,YearlyData[1]?.totalRevenue,YearlyData[2]?.totalRevenue,YearlyData[3]?.totalRevenue,YearlyData[4]?.totalRevenue],
+      // data: [YearlyData[0]?.totalRevenue,YearlyData[1]?.totalRevenue,YearlyData[2]?.totalRevenue,YearlyData[3]?.totalRevenue,YearlyData[4]?.totalRevenue],
+      data: [0,0,0,0,YearlyData[0]?.totalRevenue],
+
       borderColor: "green",
       fill: false
     }]
