@@ -110,9 +110,9 @@ module.exports = {
             })
             .then((data) => {
               console.log(data,"after log in");
-              // console.log("soorya ethi mone ");
-              // req.session.user = data;
-              // req.session.loggedIn = true;
+              console.log("sooraj here ");
+              req.session.user = userExsist
+              req.session.loggedIn = true;
               res.send({ value: true });   //////HEAD ERROR
             })
             .catch((error) => {
