@@ -13,14 +13,16 @@ module.exports = {
             let user = await db.user.find({})
             .countDocuments()
             .then(documents=>{
+                console.log(documents,"og doc");
                 docCount=documents
                 return  db.user.find({})
                 .skip((pageCount-1)*perPage)
                 .limit(perPage)
             })
             .then(user=>{
+                console.log(docCount,"doc ccc");
                 console.log(user,"page user");
-                resolve(user)
+                resolve({user,docCount})
             })
         })
     },

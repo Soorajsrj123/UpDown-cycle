@@ -41,22 +41,25 @@ module.exports = {
     let product = await productHelpers.getAllproducts();
     let mainBanner = await productHelpers.getBanner();
     let cataBanner= await productHelpers.getCataBanner()
+    console.log(req.session.user._id,"logdincase");
     if (user) {
       let cartCount = await userHelpers.getCartCount(req?.session?.user?._id);
 
       res.render("index", { nav: true, user, cartCount, product, mainBanner,cataBanner });
     } else {
+      console.log(req.session.user._id,"no user case");
       res.render("index", { nav: true, user: false, product, mainBanner,cataBanner });
       // res.redirect('/login')
     }
   },
 
   loginPageGet: (req, res, next) => {
-    if (req.session.loggedIn) {
-      res.redirect("/");
-    } else {
       res.render("users/user-login", { nav: false });
-    }
+    // if (req.session.loggedIn) {
+    //   res.redirect("/");
+    // } else {
+    //   res.render("users/user-login", { nav: false });
+    // }
   },
 
   loginPagePost: (req, res) => {
@@ -97,6 +100,7 @@ module.exports = {
     userHelpers
       .isUser(req.query.mobileNumber)
       .then((userExsist) => {
+        console.log(userExsist,"OTP WISE USER");
         if (userExsist) {
           Client.verify
             .services(config.serviceId)
@@ -105,6 +109,7 @@ module.exports = {
               channel: "sms",
             })
             .then((data) => {
+              console.log(data,"after log in");
               // console.log("soorya ethi mone ");
               // req.session.user = data;
               // req.session.loggedIn = true;
@@ -327,6 +332,7 @@ module.exports = {
       });
   },
   logout: (req, res) => {
+    req.session.user=""
     req.session.loggedIn = false;
     res.redirect("/login");
   },
@@ -511,6 +517,7 @@ module.exports = {
 
     console.log(req.body,"body");
     // let user=await db.user.findOne({_id:req.session.user._id})
+    console.log(req.session.user._id,"new pass user");
     userHelpers.changePassword(req.body,req.session.user._id).then((response)=>{
       if(response.status){
         console.log("succ");

@@ -114,8 +114,9 @@ index=index.filter((item,i)=>index.indexOf(item)==i)
   userManagement: (req, res) => {
     const pageNum=req.query.page
     const perPage=2
-    adminHelpers.getUserDetails(pageNum,perPage).then((user) => {
-      res.render("admin/users", { layout, user, nav: true });
+    adminHelpers.getUserDetails(pageNum,perPage).then((data) => {
+      console.log(data.docCount,"count");
+      res.render("admin/users", { layout, user:data.user, nav: true ,currentpage:pageNum,pages:Math.ceil(data.docCount/perPage)});
     });
   },
   blockUserGet: (req, res) => {
