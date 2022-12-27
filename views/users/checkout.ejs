@@ -715,9 +715,9 @@ Follow me on Codepen
       "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
       "handler": function(response) {
         console.log("before verify");
-        alert(response.razorpay_payment_id);
-        alert(response.razorpay_order_id);
-        alert(response.razorpay_signature)
+        // alert(response.razorpay_payment_id);
+        // alert(response.razorpay_order_id);
+        // alert(response.razorpay_signature)
         verifyPayment(response, order)
       },
       "prefill": {
@@ -758,7 +758,7 @@ Follow me on Codepen
       method: 'post',
      
       success: (response) => {
-        alert("verify res come")
+      
         if (response.status) {
           window.location.href = '/success'
         } else {
