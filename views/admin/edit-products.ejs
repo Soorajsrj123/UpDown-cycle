@@ -83,7 +83,7 @@
           <input type="file" name="image" id="img" class="form-control"  onchange="document.getElementById('imgView3').src=window.URL.createObjectURL(this.files[0]),passindex(3)">
         </div>
 
-        <input type="text" id="indexOfImage" name="indexOfImage">
+        <input type="text" id="indexOfImage" name="indexOfImage" hidden >
 
         <button type="button" onclick="validate()" class="btn btn-primary mt-3" value="Upload">Upload</button>
         <a href="/admin/products" class="btn btn-light mt-3">cancel</a>

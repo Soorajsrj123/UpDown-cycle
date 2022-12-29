@@ -35,6 +35,15 @@ module.exports = {
       res.redirect("/login");
     }
   },
+  verifyLoginApi: (req, res, next) => {
+    if (req.session.loggedIn) {
+      console.log('if is working');
+      next();
+    } else {
+      console.log('why else is working');
+      res.send({login:false});
+    }
+  },
 
   landingPage: async function (req, res, next) {
     let user = req.session.loggedIn;
@@ -147,12 +156,13 @@ module.exports = {
 
   shopPage: (req, res, next) => {
     console.log(req.query,"query");
+    let user=req.session.loggedIn
     productHelpers.getAllproducts(req.query).then(async (products) => {
       let cartCount = await userHelpers.getCartCount(req?.session?.user?._id);
       res.render("users/user-shop", {
         products,
         nav: true,
-        user: true,
+        user,
         cartCount,
       });
     });

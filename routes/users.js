@@ -8,6 +8,8 @@ const productHelpers = require("../helpers/productHelpers");
 const { product, user } = require("../config/connection");
 const userController = require("../controller/userController");
 const { verifyLogin } = require("../controller/userController");
+const { verifyLoginApi } = require("../controller/userController");
+
 const { verifyAdmin } = require("../controller/adminControler");
 const adminControler = require("../controller/adminControler");
 const Client = require("twilio")(config.accountId, config.authToken);
@@ -99,7 +101,7 @@ router.post("/deleteAddress", verifyLogin, userController.removeAddress);
 
 //CHECK CART QUANTITY
 
-router.get("/check-cart-quantity/:id",verifyLogin, userController.checkCartQuantity);
+router.get("/check-cart-quantity/:id",verifyLoginApi, userController.checkCartQuantity);////
 
 //PAYPAL SUCCESS
 router.get("/paypal-success", verifyLogin, userController.paypalSuccess);

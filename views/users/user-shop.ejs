@@ -464,6 +464,17 @@
       url: '/check-cart-quantity/' + proId,
       method: 'get',
       success: (response) => {
+
+        //checking if user login or not
+        if (response.login==false) {
+          console.log(response,'this is my respones');
+          Swal.fire({
+                icon: 'error',
+                 title: 'Oops...',
+                 text: 'Please Login To Continue',
+               })
+        }else{
+                  
         if (response.status) {
           if (stock - response.quantity <= 0) {
           toast2()
@@ -473,6 +484,7 @@
               method: 'get',
 
               success: (response) => {
+               
                 if (response.status) {
                   toast1()
                   let count = $('#cart-count').html()
@@ -505,6 +517,7 @@
           })
         }
       }
+    }
     })
 
 
