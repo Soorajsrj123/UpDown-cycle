@@ -50,7 +50,7 @@ module.exports = {
     let product = await productHelpers.getAllproducts();
     let mainBanner = await productHelpers.getBanner();
     let cataBanner= await productHelpers.getCataBanner()
-    console.log(req.session.user._id,"logdincase");
+    console.log(req?.session?.user?._id,"logdincase");
     if (user) {
       let cartCount = await userHelpers.getCartCount(req?.session?.user?._id);
 
