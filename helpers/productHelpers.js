@@ -30,9 +30,7 @@ module.exports = {
           // console.log("else");
           db.product.find({}).then((data)=>{
             resolve(data);
-
           })
-  
         }
        
       } catch (error) {

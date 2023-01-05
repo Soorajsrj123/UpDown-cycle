@@ -56,7 +56,7 @@ module.exports = {
 
       res.render("index", { nav: true, user, cartCount, product, mainBanner,cataBanner });
     } else {
-      console.log(req.session.user._id,"no user case");
+
       res.render("index", { nav: true, user: false, product, mainBanner,cataBanner });
       // res.redirect('/login')
     }
