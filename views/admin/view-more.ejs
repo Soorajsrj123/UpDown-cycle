@@ -45,6 +45,30 @@
       border-radius: 5px;
   
     }
+    a {
+  text-decoration: none;
+  display: inline-block;
+  padding: 15px 16px;
+}
+
+a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.previous {
+  background-color: #f1f1f1;
+  color: black;
+}
+
+.next {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.round {
+  border-radius: 50%;
+}
   </style>
   <section>
   
@@ -53,6 +77,8 @@
     <div class="container-fluid ">
       <div class="row">
         <div class="col-md-12">
+          <a href="/admin/orders" class="previous">&laquo; Previous</a>
+
           <div class="mainbar ">
             <section id="page-top">
               <!-- Page Wrapper -->
@@ -89,9 +115,9 @@
         <% const dataToReadable=(date)=>{
 
           const date_ = new Date(date);
-          let month = ['Jan','Feb','March','April','May','June','July','Aug','Sept','Nov','Dec']
+          let month = ['Jan','Feb','March','April','May','June','July','Aug','Sept','oct','Nov','Dec']
           let dd = date_.getDate();
-          let mm = date_.getMonth()-1;
+          let mm = date_.getMonth();
           let monthText = month[mm]
           let yyyy = date_.getFullYear();
 

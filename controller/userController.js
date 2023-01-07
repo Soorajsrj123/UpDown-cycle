@@ -56,7 +56,6 @@ module.exports = {
 
       res.render("index", { nav: true, user, cartCount, product, mainBanner,cataBanner });
     } else {
-
       res.render("index", { nav: true, user: false, product, mainBanner,cataBanner });
       // res.redirect('/login')
     }
@@ -246,7 +245,7 @@ module.exports = {
     // console.log(req.body, "raor body");
     // console.log(total, "raor total");
     req.body.userId = req.session.user._id;
-    userHelpers.placeOrder(req.body, total, req.session.coupon)
+    userHelpers.placeOrder(req.body, total, req.session.coupon,couponAmount)
       .then((response) => {
         if (req.body.payment == "COD") {
           req.session.coupon = "";

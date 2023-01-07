@@ -91,9 +91,9 @@
                               <%  const dataToReadable=(date)=>{
   
                                       const date_ = new Date(date);
-                                      let month = ['Jan','Feb','March','April','May','June','July','Aug','Sept','Nov','Dec']
+                                      let month = ['Jan','Feb','March','April','May','June','July','Aug','Sept','Oct','Nov','Dec']
                                       let dd = date_.getDate();
-                                      let mm = date_.getMonth()-1;
+                                      let mm = date_.getMonth();
                                       let monthText = month[mm]
                                       let yyyy = date_.getFullYear();
   
@@ -218,6 +218,10 @@
                                     </div>
                                   </div>
                                   <div class="col-4">
+                                    <% if(order.couponAmount){ %> 
+<h4 class="mt-2 mx-4 ">Discount</h4><span class="mx-4 mt-2 " style=" color: #21aa1c;font-size:18px !important; " >Rs:<%=order.couponAmount  %> </span>
+<% }%>
+
 
                                     <h5 class="mt-2 mx-4 ">TOTAL PRICE</h5>
                                     <span class="mx-4 mt-2 " style="color: #fb6400; font-size: x-large !important; font-weight: 500; ">Rs:<%=order.totalPrice  %> </span>

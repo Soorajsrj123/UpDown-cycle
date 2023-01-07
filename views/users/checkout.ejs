@@ -318,13 +318,19 @@ Follow me on Codepen
                       <td>$76,00</td>
                     </tr> -->
                     <!-- <tr class="summary-subtotal">
-                      <td>Subtotal:</td>
+                      <td>Subtotal:</td>offerApplied
                       <td>$160.00</td> -->
                     </tr><!-- End .summary-subtotal -->
                     <tr>
                       <td>Shipping:</td>
                       <td>Free shipping</td>
                     </tr>
+                    <tr class="summary-total">
+                      <td>offerTotal:</td>
+                      <td>
+                        <strong><p class="text-success" id="offerApplied">₹ 0</p></strong>
+                      </td>
+                    </tr><!-- End .summary-total -->
                     <tr class="summary-total">
                       <td>Total:</td>
                       <td id="finalAmount">
@@ -856,6 +862,7 @@ function fillAddress(addsId) {
 </script>
 
 <script>
+
   function applyCoupon(input, id, couponCode) {
 
 
@@ -883,7 +890,7 @@ function fillAddress(addsId) {
 
             // tost
             cpnBtn.innerHTML = "applied"
-            // document.getElementById('offerApplied').innerText="Rs"+response.coupoAmount
+            document.getElementById('offerApplied').innerText="Rs"+response.couponAmount
             let offertotal = document.getElementById('finalAmount').innerText = response.offerTotal
             document.getElementById('finalAmount').innerText = "Rs" + offertotal
 

@@ -277,7 +277,7 @@ module.exports = {
     });
   },
 
-  placeOrder: (order, total, couponId) => {
+  placeOrder: (order, total, couponId,couponamount) => {
     return new Promise(async (resolve, reject) => {
       try {
         let components = await db.cart.aggregate([
@@ -405,6 +405,7 @@ module.exports = {
           totalPrice: total, //////////////////////////////////////////////////
           totalQuantity: totalQuantity,
           shippingAddress: orderAddress,
+          couponAmount:couponamount
         };
         let orderdata = {
           userId: order.userId,
@@ -430,6 +431,7 @@ module.exports = {
                       totalPrice: total, /////////////////////////////////////////////////////
                       totalQuantity: totalQuantity,
                       shippingAddress: orderAddress,
+                      couponAmount:couponamount
                     },
                   ],
                 },

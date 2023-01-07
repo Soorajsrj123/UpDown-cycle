@@ -59,8 +59,9 @@ module.exports = {
 
   addCouponToUser:(userId,coupId,value)=>{
     return new Promise((resolve, reject) => {
-      console.log(coupId,'soorya dfsjasdkfj');
-      db.user.findOne({'coupon.couponId':coupId}).then((response)=>{
+    console.log(userId,"uuuu");
+      db.user.findOne({_id:userId,'coupon.couponId':coupId}).then((response)=>{
+         console.log("start",response,"kjhg");
         if(!response){
 
           let couponObj={
@@ -81,7 +82,7 @@ module.exports = {
         }else{
           let couponIndex=response.coupon.findIndex(i=>i.couponId==""+coupId)
           
-          console.log(response,couponIndex,'this is coupon');
+          console.log(couponIndex,'this is coupon');
           if(response.coupon[couponIndex].status){
             reject()
           }else{
