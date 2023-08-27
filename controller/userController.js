@@ -339,7 +339,7 @@ module.exports = {
         });
       })
       .catch((err) => {
-        // console.log(err);
+        console.log(err,"err in verr in back");
         res.json({ status: false });
       });
   },

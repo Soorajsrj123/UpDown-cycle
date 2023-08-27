@@ -718,7 +718,7 @@ Follow me on Codepen
   function razorpayPayment(order) {
     console.log(order,"razor order");
     var options = {
-      "key": "rzp_test_kztxhxAp7JryOm", // Enter the Key ID generated from the Dashboard
+      "key": "rzp_test_M18IaPXgq2W1BS", // Enter the Key ID generated from the Dashboard
       "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
       "currency": "INR",
       "name": "uptown ",
@@ -770,7 +770,7 @@ Follow me on Codepen
       method: 'post',
      
       success: (response) => {
-      
+      console.log(response,"res in veriyf pay,emt");
         if (response.status) {
           window.location.href = '/success'
         } else {
