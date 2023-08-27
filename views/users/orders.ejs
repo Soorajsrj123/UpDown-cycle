@@ -218,9 +218,11 @@
                                     </div>
                                   </div>
                                   <div class="col-4">
-                                    <% if(order.couponAmount){ %> 
-<h4 class="mt-2 mx-4 ">Discount</h4><span class="mx-4 mt-2 " style=" color: #21aa1c;font-size:18px !important; " >Rs:<%=order.couponAmount  %> </span>
-<% }%>
+                                    <% if(order.couponAmount==0){ %> 
+
+<% } else{%>
+  <h4 class="mt-2 mx-4 ">Discount</h4><span class="mx-4 mt-2 " style=" color: #21aa1c;font-size:18px !important; " >Rs:<%=order.couponAmount  %> </span>
+  <% } %> 
 
 
                                     <h5 class="mt-2 mx-4 ">TOTAL PRICE</h5>

@@ -71,9 +71,10 @@ module.exports = {
   },
 
   loginPagePost: (req, res) => {
-    // console.log(req.body);
+    
     userHelpers.doLogin(req.body).then((response) => {
       // console.log("my respp", response);
+      console.log(req.session.cookie,"req session");
       if (response.status) {
         req.session.loggedIn = true;
         req.session.user = response.user;
@@ -93,6 +94,7 @@ module.exports = {
   signUpPagePost: (req, res) => {
     userHelpers.doSignUp(req.body).then((response) => {
       if (!response.status) {
+        
         res.send({ value: "failed" });
       } else {
         req.session.loggedIn = true;
@@ -124,6 +126,7 @@ module.exports = {
               res.send({ value: true });   //////HEAD ERROR
             })
             .catch((error) => {
+              console.log(error,"error in otp");
               res.send({ value: false, message: error.message });
             });
         } else {

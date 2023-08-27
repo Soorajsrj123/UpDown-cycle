@@ -4,10 +4,10 @@ const { ObjectId } = require("mongodb");
 const Razorpay = require("razorpay");
 
 var instance = new Razorpay({
-  key_id: "rzp_test_kztxhxAp7JryOm",
-  key_secret: "Y8ZLXIMBUbuT28CeqB6FWu1L",
+  key_id: "rzp_test_M18IaPXgq2W1BS",
+  key_secret: "KhTSrpq2fpbhEJ",
 });
-
+  
 module.exports = {
   doLogin: (userData) => {
     return new Promise(async (resolve, reject) => {
@@ -41,7 +41,7 @@ module.exports = {
   doSignUp: (userData) => {
     return new Promise(async (resolve, reject) => {
       try {
-        // await User.findOne({ "$or": [ { email: email }, { phone: phone} ] })
+   
         db.user
           .find({ $or: [{ email: userData.email }, { phone: userData.phone }] })
           .then(async (data) => {
@@ -50,9 +50,9 @@ module.exports = {
               resolve({ status: false });
             } else {
               userData.password = await bcrypt.hash(userData.password, 10);
-
               let data = db.user(userData);
               data.save();
+              console.log(data,"saved user");
               response.value = userData;
               response.status = true;
               response.data = data.insertedId;
@@ -61,6 +61,7 @@ module.exports = {
           });
       } catch (error) {
         console.log(error);
+        return error
       }
     });
   },
@@ -233,6 +234,7 @@ module.exports = {
     });
   },
   getTotalAmmount: (userId) => {
+    console.log(userId);
     return new Promise(async (resolve, reject) => {
       let total = await db.cart.aggregate([
         {
@@ -272,7 +274,7 @@ module.exports = {
           },
         },
       ]);
-
+      console.log(total,"ttttt");
       resolve(total[0]);
     });
   },
@@ -649,7 +651,7 @@ if(aggrData[0].orders.paymentMethod=="razorpay"|| aggrData[0].orders.paymentMeth
   verifyPayment: (details) => {
     return new Promise((resolve, reject) => {
       const crypto = require("crypto");
-      let hmac = crypto.createHmac("sha256", "Y8ZLXIMBUbuT28CeqB6FWu1L");
+      let hmac = crypto.createHmac("sha256", "KhTSrpq2fpbhEJ");
       hmac.update(
         details["payment[razorpay_order_id]"] +
           "|" +

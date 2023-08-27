@@ -144,7 +144,7 @@ module.exports = {
         {
           $group:{
             _id:{'$month':"$orders.createdAt"},
-            totalCount:{$sum:{$multiply:['$orders.productDetails.offerprice','$orders.productDetails.quantity']}},
+            totalCount:{$sum:'$orders.totalPrice'},
            orders:{$sum:1},
            totalQuantity:{$sum:'$orders.productDetails.quantity'}
           }
@@ -187,7 +187,7 @@ module.exports = {
                 {
                 $group:{
                     _id:{'$dayOfMonth':'$orders.createdAt'},
-                    totalRevenue:{$sum:{$multiply:['$orders.productDetails.offerprice','$orders.productDetails.quantity']}},
+                    totalRevenue:{$sum:'$orders.totalPrice'},
                     orders:{$sum:1},
                     totalQuantity:{$sum:'$orders.productDetails.quantity'}
                     
@@ -231,7 +231,7 @@ module.exports = {
             {
                 $group:{
                     _id:{'$year':'$orders.createdAt'},
-                    totalRevenue:{$sum:{$multiply:['$orders.productDetails.offerprice','$orders.productDetails.quantity']}},
+                    totalRevenue:{$sum:'$orders.totalPrice'},
                     orders:{$sum:1},
                     totalQuantity:{$sum:'$orders.productDetails.quantity'}
                 }
