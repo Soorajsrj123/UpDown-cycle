@@ -175,24 +175,6 @@ index=index.filter((item,i)=>index.indexOf(item)==i)
     console.log("yes orders", orderitems);
     res.render("admin/order-management", { orderitems, layout, nav: true });
   },
-  loginGet: (req, res) => {
-    if (req.session.adminlogIn) {
-      res.redirect("/admin");
-    } else {
-      res.render("admin/login");
-    }
-  },
-  loginPost: (req, res) => {
-    adminHelpers.doLogin(req.body).then((response) => {
-      console.log("yes coming");
-      if (response.status) {
-        req.session.adminlogIn = true;
-        res.redirect("/admin");
-      } else {
-        res.redirect("/admin/login");
-      }
-    });
-  },
   viewMore: async (req, res) => {
     let allOrders = await adminHelpers.orderDetails(req.params.id);
     res.render("admin/view-more", { allOrders });

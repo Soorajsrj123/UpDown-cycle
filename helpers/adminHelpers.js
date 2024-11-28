@@ -47,31 +47,6 @@ module.exports = {
 
         })
     },
-    doLogin:(userData)=>{
-        return new Promise(async(resolve, reject) => {
-         console.log(userData);
-
-           if(data.email == userData.email){
-              bcrypt.compare(userData.password, data.password).then((loginTrue)=>{
-               
-                 let response={}
-                 if(loginTrue){
-                    console.log('login successful');
-                    response.admin=data;
-                    response.status=true;
-                    resolve(response);
-                 }else{
-                    console.log("login failed");
-                    resolve({status:false});
-                 }
-              })
-           }else{
-              console.log('Login failed email');
-               resolve({status:false});
-           }
-           
-        })
-   },
    orderDetails:(orderId)=>{
      return new Promise(async(resolve, reject) => {
         let order=await db.order.aggregate([
@@ -123,6 +98,7 @@ module.exports = {
    },
 
    doLogintwo:(adminData)=>{
+    console.log(adminData.password)
     return new Promise(async (resolve, reject) => {
         let response = {}
         let admin = await db.admin.findOne({ email: adminData.email })
@@ -147,5 +123,4 @@ module.exports = {
         }
     })
    },
-
 }

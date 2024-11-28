@@ -9,7 +9,7 @@ var instance = new Razorpay({
 });
   
 module.exports = {
-  doLogin: (userData) => {
+  doLogin:  (userData) => {
     return new Promise(async (resolve, reject) => {
       try {
         let response = {};
@@ -38,32 +38,79 @@ module.exports = {
     });
   },
 
-  doSignUp: (userData) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-   
-        db.user
-          .find({ $or: [{ email: userData.email }, { phone: userData.phone }] })
-          .then(async (data) => {
-            let response = {};
-            if (data.length != 0) {
-              resolve({ status: false });
-            } else {
-              userData.password = await bcrypt.hash(userData.password, 10);
-              let data = db.user(userData);
-              data.save();
-              console.log(data,"saved user");
-              response.value = userData;
-              response.status = true;
-              response.data = data.insertedId;
-              resolve(response);
-            }
-          });
-      } catch (error) {
-        console.log(error);
-        return error
+  doSignUp: async (userData) => {
+    try {
+      // Checking if user already exists
+      const existingUser = await db.user.findOne({ 
+        $or: [
+          { email: userData.email }, 
+          { phone: userData.phone }
+        ] 
+      });
+  
+      if (existingUser) {
+        return {
+          status: false,
+          message: "User already exists"
+        };
       }
-    });
+  
+      // Hash password
+      const saltRounds = 10; 
+      const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+      
+      const newUser = new db.user({
+        ...userData,
+        password: hashedPassword
+      });
+  
+      const savedUser = await newUser.save();
+  
+      return {
+        status: true,
+        value: {
+          email: savedUser.email,
+          phone: savedUser.phone,
+          _id: savedUser._id
+        },
+        data: savedUser._id
+      };
+  
+    } catch (error) {
+      console.error('doSignUp Error:', error);
+      throw {
+        status: false,
+        message: error.message || "Error creating user"
+      };
+    }
+    // return new Promise(async (resolve, reject) => {
+    //   try {
+    //     db.user
+    //       .find({ $or: [{ email: userData.email }, { phone: userData.phone }] })
+    //       .then(async (data) => {
+    //         let response = {};
+    //         if (data.length != 0) {
+    //           resolve({ status: false,message:"User already Exist" });
+    //         } else {
+    //           userData.password = await bcrypt.hash(userData.password, "");
+    //           console.log(userData)
+    //           let data = db.user(userData);
+    //           data.save();
+    //           console.log(data)
+    //           console.log(data,"saved user");
+    //           response.value = userData;
+    //           response.status = true;
+    //           response.data = data._id;
+              
+    //           resolve(response);
+    //         }
+    //       });
+          
+    //   } catch (error) {
+    //     console.log(error);
+    //     reject(error)
+    //   }
+    // });
   },
   addToCart: (proId, userId) => {
     prodObj = {

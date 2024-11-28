@@ -1,18 +1,9 @@
-const { response } = require("express");
 var express = require("express");
-const userHelpers = require("../helpers/userHelpers");
 var router = express.Router();
-const config = require("../config/otp");
-const otp = require("../config/otp");
-const productHelpers = require("../helpers/productHelpers");
-const { product, user } = require("../config/connection");
 const userController = require("../controller/userController");
 const { verifyLogin } = require("../controller/userController");
 const { verifyLoginApi } = require("../controller/userController");
 
-const { verifyAdmin } = require("../controller/adminControler");
-const adminControler = require("../controller/adminControler");
-const Client = require("twilio")(config.accountId, config.authToken);
 
 /* GET users listing. */
 

@@ -1,19 +1,10 @@
 require("dotenv").config();
-
-const { response } = require("express");
-var express = require("express");
 const userHelpers = require("../helpers/userHelpers");
-var router = express.Router();
-const config = require("../config/otp");
-const otp = require("../config/otp");
 const productHelpers = require("../helpers/productHelpers");
 var couponHelpers = require("../helpers/couponHelpers");
-const { product } = require("../config/connection");
-const userController = require("../controller/userController");
-const { resolveInclude } = require("ejs");
-const { Db, ObjectId } = require("mongodb");
+const {  ObjectId } = require("mongodb");
 var db = require("../config/connection");
-const Client = require("twilio")(config.accountId, config.authToken);
+const Client = require("twilio")(process.env.TWILIO_ACCOUNT_ID,process.env.TWILIO_AUTH_TOKEN);
 
 const paypal = require("@paypal/checkout-server-sdk");
 const Environment =
@@ -78,11 +69,11 @@ module.exports = {
       if (response.status) {
         req.session.loggedIn = true;
         req.session.user = response.user;
-        res.send({ value: "success"});
+        res.send({ value: "success", message:"User loggin success"});
       } else if (response.blocked) {
-        res.send({ value: "blocked" });
+        res.status(401).send({ value: "blocked",message:'User blocked' });
       } else {
-        res.send({ value: "failed" });
+        res.status(401).send({ value: "failed" ,message:"Invalid credentials"});
       }
     });
   },
@@ -91,16 +82,42 @@ module.exports = {
     res.render("users/user-signup", { nav: false });
   },
 
-  signUpPagePost: (req, res) => {
-    userHelpers.doSignUp(req.body).then((response) => {
-      if (!response.status) {
+  signUpPagePost:async (req, res) => {
         
-        res.send({ value: "failed" });
-      } else {
-        req.session.loggedIn = true;
-        res.send({ value: "success" });
+    try {
+      const response = await userHelpers.doSignUp(req.body);
+      
+      if (!response.status) {
+        return res.status(400).json({ 
+          value: "failed", 
+          message: response.message 
+        });
       }
-    });
+      
+      req.session.loggedIn = true;
+      res.status(200).json({ value: "success" });
+      
+    } catch (error) {
+      console.error('SignUp Error:', error);
+      res.status(500).json({
+        value: "failed",
+        message: error.message || "Something went wrong"
+      });
+    }
+    //   userHelpers.doSignUp(req.body).then((response) => {
+     
+    //   if (!response.status) {
+        
+    //     res.send({ value: "failed",message:response.message });
+
+    //   } else {
+    //     req.session.loggedIn = true;
+    //     res.send({ value: "success" });
+    //   }
+    // }).catch((err)=>{
+    //   console.log(err)
+    //   res.status(500).send({value:"failed",message:"Something went wrong"})
+    // })
   },
   otpPage: (req, res) => {
     res.render("users/otp");
@@ -113,13 +130,13 @@ module.exports = {
         console.log(userExsist,"OTP WISE USER");
         if (userExsist) {
           Client.verify
-            .services(config.serviceId)
+            .services(process.env.TWILIO_SERVICE_ID)
             .verifications.create({
               to: `+91${req.query.mobileNumber.trim()}`,
               channel: "sms",
             })
             .then((data) => {
-              console.log(data,"after log in");
+              console.log(data,"after log in============================");
               console.log("sooraj here ");
               req.session.user = userExsist
               req.session.loggedIn = true;
@@ -138,7 +155,7 @@ module.exports = {
 
   otpVerify: (req, res) => {
     Client.verify
-      .services(otp.serviceId)
+      .services(process.env.TWILIO_SERVICE_ID)
       .verificationChecks.create({
         to: `+91${req.query.mobileNumber.trim()}`,
         code: req.query.code,

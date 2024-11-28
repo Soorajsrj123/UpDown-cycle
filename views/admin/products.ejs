@@ -1,5 +1,5 @@
 <div class="table-responsive pt-3">
-  <a class="btn btn-primary my-3" href="/admin/add-product" >add products</a>
+  <a class="btn btn-primary my-3" href="/admin/add-product">add products</a>
 
   <table class="table table-bordered">
     <thead>
@@ -17,7 +17,7 @@
           Description
         </th>
         <th>
-         offer price
+          offer price
         </th>
         <th>
           stock
@@ -33,35 +33,35 @@
       </tr>
     </thead>
     <tbody>
-   
+
       <% products.forEach((products,index)=>{%>
-<tr>
-  <td>
-<%= index+1 %>
-  </td>
-  <td>
-<img style="border-radius:0;" src="/productimages/<%= products.img[0] %>" alt="img">
-  </td>
-  <td>
-    <%= products.name %>
-  </td>
-  <td>
-    <%= products.description %>
-   
-  </td>
-  <td>
-    <%= products.offerprice%>
-  </td>
- 
-  <td>
-    <%= products.stock %>
-  </td>
-  <td>
- <a href="/admin/edit-product/<%=products._id%>"> <button class="btn-primary">edit</button></a> 
- <a href="/admin/delete-product/<%=products._id%>" onclick="return confirm('are you sure want to delete the product <%= products.name %>')"><button class="btn-danger">delete</button></a>
-  </td>
-</tr>
-<% })%>
+      <tr>
+        <td>
+          <%= index+1 %>
+        </td>
+        <td>
+          <img style="border-radius:0;" src="/productimages/<%= products.img[0] %>" alt="img">
+        </td>
+        <td>
+          <%= products.name %>
+        </td>
+        <td>
+          <%= products.description %>
+
+        </td>
+        <td>
+          <%= products.offerprice%>
+        </td>
+
+        <td>
+          <%= products.stock %>
+        </td>
+        <td>
+          <a href="/admin/edit-product/<%=products._id%>"> <button class="btn-primary">edit</button></a>
+          <a href="/admin/delete-product/<%=products._id%>" onclick="return confirm('are you sure want to delete the product <%= products.name %>')"><button class="btn-danger">delete</button></a>
+        </td>
+      </tr>
+      <% })%>
     </tbody>
   </table>
   <nav aria-label="Page navigation example">

@@ -194,7 +194,6 @@
 </main><!-- End .main -->
 <script>
 	function changeQuantity(cartId, proId, counts, input, price,stocks) {
-		console.log(price,"jhgfghjkhg");
 		// console.log(cartId, proId, counts,input);
 		console.log(input.value);
 		let quantity = parseInt(input.value)
@@ -272,7 +271,7 @@
 
 
 
-	function swalpopup(wishlistId,proId){
+function swalpopup(wishlistId,proId){
 
 Swal.fire({
 title: 'Are you sure?',
@@ -283,7 +282,7 @@ confirmButtonColor: '#3085d6',
 cancelButtonColor: '#d33',
 confirmButtonText: 'Yes, delete it!'
 }).then((result) => {
-if (result.isConfirmed) {
+if(result.isConfirmed) {
 
   Swal.fire('Removed!','','success').then(()=>{
 
