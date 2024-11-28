@@ -1,9 +1,6 @@
 var db = require('../config/connection')
-var adminData = require('../config/admin-connection')
 const bcrypt=require('bcrypt');
 const { ObjectID } = require('bson');
-
-let data=adminData.adminId
 module.exports = {
 
 
