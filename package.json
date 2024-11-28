@@ -2,11 +2,8 @@
   "name": "updown-bicycle",
   "version": "0.0.0",
   "private": true,
-  "engines": {
-    "node": "18.x"
-  },
   "scripts": {
-    "start": "app.js",
+    "start": "node app.js",
     "dev":"nodemon app.js"
   },
   "dependencies": {
